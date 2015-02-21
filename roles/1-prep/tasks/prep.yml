@@ -1,0 +1,20 @@
+- name: Set hostname
+  template: backup=yes
+            dest=/etc/hostname
+            src=hostname.j2
+            owner=root
+            mode=0644
+
+- name: Install xsce-extra repos
+  template: backup=yes
+            dest=/etc/yum.repos.d/xsce-extra.repo
+            src=xsce-extra.repo
+            owner=root
+            mode=0666
+
+- name: Install xsce-testing repos
+  template: backup=yes
+            dest=/etc/yum.repos.d/xsce-testing.repo
+            src=xsce-testing.repo
+            owner=root
+            mode=0666
