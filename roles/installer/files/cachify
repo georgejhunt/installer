@@ -14,13 +14,14 @@ mkdir -p /usb
 maybe=`ls -la /sys/class/block/ | grep usb | gawk '{print $9}'`
 if ! [ -z "$maybe" ];then
     for token in $maybe; do
-	mount /dev/${token} /usb > /dev/null 
-	if [ $? -eq 0 ]; then
-	   if [ -f /usb/tce/mydata.tgz ]; then
-              dev=/dev/${token}
-	      break
-	   fi
-	fi 
+      mount /dev/${token} /usb > /dev/null 
+      if [ $? -eq 0 ]; then
+         if [ -f /usb/tce/mydata.tgz ]; then
+                  dev=/dev/${token}
+            umount /usb
+            break
+         fi
+      fi 
     done
 else
     echo "no USB drive found. Please correct and rerun $0"
@@ -31,6 +32,7 @@ if [ -z $dev ]; then
    echo "/tce/mydata.tgz was not found. Exiting"
    exit 1
 fi
+mount $dev /usb
 
 # get the definitions from mkstick
 source /usb/tce/installer.conf
@@ -38,11 +40,11 @@ cd ${PREFIX}
 
 
 # go grab the data
-if [ -f /usb/tce/i686/$IMGNAME.tgz ];then
-   rsync /usb/tce/i686/$IMGNAME.tgz $PREFIX/persist/target/${FC_VER}/${THISARCH}/${IMGNAME}.tgz
+if [ -f /usb/target/${FC_VER}/${THISARCH}/$IMGNAME.tgz ];then
+   rsync /usb/target/${FC_VER}/${THISARCH}/$IMGNAME.tgz $PREFIX/persist/target/${FC_VER}/${THISARCH}/${IMGNAME}.tgz
 fi
-if [ -f /usb/tce/x86_64/$IMGNAME.tgz ];then
-   rsync /usb/tce/x86_64/$IMGNAME.tgz $PREFIX/persist/target/${FC_VER}/${FC_ARCH}/${IMGNAME}.tgz
+if [ -f /usb/target/${FC_VER}/${THISARCH}/$IMGNAME-library.tgz ];then
+   rsync /usb/target/${FC_VER}/${THISARCH}/$IMGNAME-library.tgz $PREFIX/persist/target/${FC_VER}/${THISARCH}/${IMGNAME}-library.tgz
 fi
 rsync -rp /usb/tce/mydata.tgz ${PREFIX}/persist/tce/mydata.tgz
 umount /usb
