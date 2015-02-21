@@ -8,9 +8,9 @@ then
   cd $XSCE_DIR
 fi
 
-if [ ! -f xsce.yml ]
+if [ ! -f installer.yml ]
 then
- echo "XSCE Playbook not found."
+ echo "Installer Playbook not found."
  echo "Please run this command from the top level of the git repo."
  echo "Exiting."
  exit
