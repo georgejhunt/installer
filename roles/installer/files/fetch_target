@@ -24,7 +24,7 @@ if [ $? -eq 0 ]; then
    fi
 # check to see if sysprep has been executed on the server
 #
-   if [ ! -f $SOURCEMNT/etc/systemd/system/multi-user.target.wants/finish-install.service ];then
+   if [ ! -h $SOURCEMNT/etc/systemd/system/multi-user.target.wants/finish-install.service ];then
       echo
       echo "Please remember to run 'sysprep' on target before creating image"
       echo
@@ -50,13 +50,15 @@ read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " THISARCH
 case $THISARCH in
 "i686"|"x86_64")
    ;;
-"*")
+*)
    echo "Please enter either i686 or x86_64"
    exit 1
   ;;
 esac
 
 IMGNAME="netinst"
+gitcommit=`grep xsce_commit /mnt/sda2/etc/xsce/xsce.ini|cut -d" " -f3`
+echo "the git commit is $gitcommit"
 read -p "What should I call this root File System Image? Default=$IMGNAME: " ans
 if [ ! -z $ans ];then
    IMGNAME=$ans
@@ -72,13 +74,13 @@ rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
 
 cd ${SOURCEMNT}
 dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}.tgz
- XZ_OPT=-9e tar cJf ${dest} *
+tar czf ${dest} *
 md5sum ${dest} ${dest}.md5.txt 
  
 if [ ! -z ${LIBRARYMNT} ];then
 	cd ${LIBRARYMNT} 
         dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}-library.tgz
-	XZ_OPT=-9e tar cJf ${dest} *
+	tar czf ${dest} *
 	md5sum ${dest} ${dest}.md5.txt 
 fi
 #
