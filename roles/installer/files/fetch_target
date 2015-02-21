@@ -73,13 +73,13 @@ echo "THISARCH=$THISARCH" >> /mnt/sdb2/tce/installer.conf
 rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
 
 cd ${SOURCEMNT}
-dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}.tgz
+dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${IMGNAME}.tgz
 tar czf ${dest} *
 md5sum ${dest} ${dest}.md5.txt 
  
 if [ ! -z ${LIBRARYMNT} ];then
 	cd ${LIBRARYMNT} 
-        dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}-library.tgz
+        dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${IMGNAME}-library.tgz
 	tar czf ${dest} *
 	md5sum ${dest} ${dest}.md5.txt 
 fi

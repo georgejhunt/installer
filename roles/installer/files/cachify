@@ -40,11 +40,13 @@ cd ${PREFIX}
 
 
 # go grab the data
-if [ -f /usb/target/${FC_VER}/${THISARCH}/$IMGNAME.tgz ];then
-   rsync /usb/target/${FC_VER}/${THISARCH}/$IMGNAME.tgz $PREFIX/persist/target/${FC_VER}/${THISARCH}/${IMGNAME}.tgz
+nibble=${FC_VER}/${THISARCH}/${THISARCH}fc${THIS_VER}_${IMAGENAME}
+source=/usb/target/${nibble}
+if [ -f ${source}.tgz ];then
+   rsync ${source}.tgz $PREFIX/persist/target/${nibble}.tgz
 fi
-if [ -f /usb/target/${FC_VER}/${THISARCH}/$IMGNAME-library.tgz ];then
-   rsync /usb/target/${FC_VER}/${THISARCH}/$IMGNAME-library.tgz $PREFIX/persist/target/${FC_VER}/${THISARCH}/${IMGNAME}-library.tgz
+if [ -f ${source}-library.tgz ];then
+   rsync ${source}-library.tgz $PREFIX/persist/target/${nibble}-library.tgz
 fi
 rsync -rp /usb/tce/mydata.tgz ${PREFIX}/persist/tce/mydata.tgz
 umount /usb
