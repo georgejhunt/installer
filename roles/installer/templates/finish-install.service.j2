@@ -1,0 +1,9 @@
+[Unit]
+Description=Small script to clean up offline install, set up networks,etc
+
+[Service]
+Type=idle
+ExecStart={{ xsce_dir }}/scripts/installer/xsce-after-installer
+
+[Install]
+WantedBy=multi-user.target

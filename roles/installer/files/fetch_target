@@ -1,0 +1,90 @@
+#!/bin/ash -x
+# this script runs on Tiny Core after target machine is set up, captures it
+
+# Using the USB as shuttle, bring the target machine onto the USB stick
+# The tinycore  mydaya.tgz is already here
+
+# the following config file communicates between desktop and tiny core
+source /mnt/sdb2/tce/installer.conf
+
+# are we fetching a netinst, or a configured XSCE
+mount /dev/sda3 /mnt/sda3
+if [ $? -eq 0 ]; then
+   if [ -d /mnt/sda3/cache ]; then 
+      mount "/dev/sda2" "/mnt/sda2"
+      if [ ! $? -eq 0 ];then
+	 echo "unable to mount /dev/sda2. quitting"
+	 exit 1
+      fi
+      SOURCEMNT="/mnt/sda2"
+      LIBRARYMNT="/mnt/sda3"
+   else
+      echo "cannot find /cache on partition 3. Quitting"
+      exit 1
+   fi
+# check to see if sysprep has been executed on the server
+#
+   if [ ! -f $SOURCEMNT/etc/systemd/system/multi-user.target.wants/finish-install.service ];then
+      echo
+      echo "Please remember to run 'sysprep' on target before creating image"
+      echo
+      exit 1
+  fi
+else # check if this might be a netinst
+   mount /dev/sda1 /mnt/sda1
+   if [ $? -eq 0 ];then
+	if [ -f /mnt/sda1/usr ];then
+	    SOURCEMNT="mnt/sda1"
+        else
+   	    echo "Cannot find /usr on /mnt/sda1. Quitting"
+	    exit 1
+        fi
+   fi
+fi
+
+
+echo
+echo "================================================================="
+echo 
+read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " THISARCH
+case $THISARCH in
+"i686"|"x86_64")
+   ;;
+"*")
+   echo "Please enter either i686 or x86_64"
+   exit 1
+  ;;
+esac
+
+IMGNAME="netinst"
+read -p "What should I call this root File System Image? Default=$IMGNAME: " ans
+if [ ! -z $ans ];then
+   IMGNAME=$ans
+fi
+# the following leaves a pointer to the configured tgz image to be incorporated
+#   into the USB stick, created by this script
+mkdir -p /mnt/sdb2/tce/$THISARCH/
+echo "IMGNAME=$IMGNAME" >> /mnt/sdb2/tce/installer.conf
+echo "THISARCH=$THISARCH" >> /mnt/sdb2/tce/installer.conf
+
+# the presence of rh-ifcg files confuses starting on new hardware, delete
+rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
+
+cd ${SOURCEMNT}
+dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}.tgz
+ XZ_OPT=-9e tar cJf ${dest} *
+md5sum ${dest} ${dest}.md5.txt 
+ 
+if [ ! -z ${LIBRARYMNT} ];then
+	cd ${LIBRARYMNT} 
+        dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}-library.tgz
+	XZ_OPT=-9e tar cJf ${dest} *
+	md5sum ${dest} ${dest}.md5.txt 
+fi
+#
+# get the md5 of mydata
+#	
+md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
+ls -l /mnt/sdb2/target/${FC_VER}/${THISARCH}
+tree /mnt/sdb2/target
+

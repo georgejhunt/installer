@@ -1,0 +1,6 @@
+#!/bin/bash
+# run this script to prepare for generating the install image
+
+# put a systemd unit file in the startup queue, removes itself after execution
+systemctl enable finish-install.service
+

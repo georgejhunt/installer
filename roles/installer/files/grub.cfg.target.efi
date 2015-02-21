@@ -1,0 +1,10 @@
+set default=0
+set timeout=5
+
+menuentry "Fedora 20 " {
+   insmod ext2
+   search --set=root --label rootfs --hint hd0,msdos2
+   linuxefi /boot/vmlinuz root=LABEL=rootfs selinux=0
+   initrdefi /boot/initramfs
+}
+

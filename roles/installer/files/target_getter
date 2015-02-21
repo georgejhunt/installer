@@ -1,0 +1,18 @@
+#!/bin/bash -x
+# runs on TinyCore, gets the rootfs and boot from minimal OS install to stick
+ARCH=`uname -p`
+VER="20"
+# creates a sneakernet between target machine and git repo
+# if the user is TC, then we're in tinycore, if root then on desktop
+#  with intention to copy it to the cloud
+if [ ! `id -u` eq 0 ];then
+	mkdir -p /mnt/sdb1/os/$ARCH
+	cd /mnt/sda2
+	tar czf /mnt/sdb1/os/$ARCH/${ARCH}fc${VER}rootfs.tgz *
+	mount /dev/sda1 /mnt/sda1
+	cd /mnt/sda1
+	tar czf /mnt/sdb1/os/$ARCH/boot.tgz *
+else
+	mount /dev/sdb1 /mnt
+	cp -r /mnt/os/* cache/target/$VER/
+fi

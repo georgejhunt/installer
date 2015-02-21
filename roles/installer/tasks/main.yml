@@ -1,0 +1,50 @@
+- name: Install packages required by installer
+  yum: name={{ item }}
+       state=present
+  with_items:
+   - mkisofs
+   - xz
+   - wget
+   - gdisk
+   - syslinux
+   - grub2
+   - e2fsprogs
+   - dosfstools
+
+- name: Create home for installer scripts
+  file: path={{ item }}
+        mode=0755
+        owner=root
+        group=root
+        state=directory
+  with_items:
+    - "{{ xsce_dir }}/scripts/installer"
+
+- name: Install scripts used to generate usb install stick
+  copy: src={{ item }}
+            dest="{{ xsce_dir }}/scripts/installer"
+            owner=root
+            group=root
+            mode=0755
+  with_items:
+      - loadOS
+      - mkstick
+      - isolinux.cfg
+      - grub.cfg.target
+      - grub.cfg.target.efi
+      - cachify
+      - xsce-after-installer
+      - fetch_target
+      - sysprep
+
+- name: Put a systemd unit file to start a bash script on first boot after install
+  template: src=finish-install.service.j2
+            dest="{{ xsce_dir }}/scripts/installer/finish-install.service"
+            owner=root
+            group=root
+            mode=0755
+
+- name: Create a symbolic link which puts sysprep on system PATH
+  file: src="{{ xsce_dir }}/scripts/installer/sysprep"
+        dest=/usr/local/sbin/sysprep
+        state=link

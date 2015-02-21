@@ -1,0 +1,62 @@
+#!/bin/bash -x
+#  Runs on the desktop machine, which is used to make the USB stick
+
+# Used in two situations:
+#  1. copy the netinst rootfs back into the cache for creation of XSCE image
+#  2. After interactive refinement of XSCE, copy configured rootfs to cache
+
+# Using the USB as shuttle, bring the persistent data (rootfs) into local cache
+# And if desired, copy it up to unleashkids.org
+
+# verify that there is a USB drive installed
+dev=""
+mkdir -p /usb
+maybe=`ls -la /sys/class/block/ | grep usb | gawk '{print $9}'`
+if ! [ -z "$maybe" ];then
+    for token in $maybe; do
+	mount /dev/${token} /usb > /dev/null 
+	if [ $? -eq 0 ]; then
+	   if [ -f /usb/tce/mydata.tgz ]; then
+              dev=/dev/${token}
+	      break
+	   fi
+	fi 
+    done
+else
+    echo "no USB drive found. Please correct and rerun $0"
+    rmdir /usb
+    exit 1
+fi
+if [ -z $dev ]; then
+   echo "/tce/mydata.tgz was not found. Exiting"
+   exit 1
+fi
+
+# get the definitions from mkstick
+source /usb/tce/installer.conf
+cd ${PREFIX}
+
+
+# go grab the data
+if [ -f /usb/tce/i686/$IMGNAME.tgz ];then
+   rsync /usb/tce/i686/$IMGNAME.tgz $PREFIX/persist/target/${FC_VER}/${THISARCH}/${IMGNAME}.tgz
+fi
+if [ -f /usb/tce/x86_64/$IMGNAME.tgz ];then
+   rsync /usb/tce/x86_64/$IMGNAME.tgz $PREFIX/persist/target/${FC_VER}/${FC_ARCH}/${IMGNAME}.tgz
+fi
+rsync -rp /usb/tce/mydata.tgz ${PREFIX}/persist/tce/mydata.tgz
+umount /usb
+rmdir /usb
+
+read -p "Hit <ctl>c to abort copying to unleash_kids"
+rsync  tce/mydata.tgz george@unleashkids.org:/home/george
+md5sum tce/mydata.tgz > tce/mydata.tgz.md5.txt
+rsync  tce/mydata.tgz.md5.txt george@unleashkids.org:/home/george
+if [ -d tce/i686 ];then
+   rsync tce/i686 george@unleashkids.org:/home/george
+fi
+if [ -d tce/x86_64 ];then
+   rsync tce/x86_64 george@unleashkids.org:/home/george
+fi
+# return to from whence we came
+cd $CURDIR
