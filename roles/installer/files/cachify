@@ -18,9 +18,9 @@ if ! [ -z "$maybe" ];then
       if [ $? -eq 0 ]; then
          if [ -f /usb/tce/mydata.tgz ]; then
                   dev=/dev/${token}
-            umount /usb
             break
          fi
+         umount /usb
       fi 
     done
 else
