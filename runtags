@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# if not the first run, repo location is here
-
-if [ -f /etc/xsce/xsce.env ]
-then
-  . /etc/xsce/xsce.env
-  cd $XSCE_DIR
-fi
-
 if [ ! -f installer.yml ]
 then
  echo "Installer Playbook not found."
