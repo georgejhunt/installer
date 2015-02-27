@@ -1,6 +1,9 @@
 #!/bin/bash
 # run this script to prepare for generating the install image
 
+# remove all the network ifcfg files except lo
+find /etc/sysconfig/network-scripts -name "ifcfg-*" -not -path "./ifcfg-lo" | xargs rm -rf 
+
 # put a systemd unit file in the startup queue, removes itself after execution
 systemctl enable finish-install.service
 

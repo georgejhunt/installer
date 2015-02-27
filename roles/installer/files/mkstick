@@ -18,6 +18,7 @@ FC_URL="http://mirrors.usc.edu/pub/linux/distributions/fedora/linux/releases/${F
 UK_URL="http://download.unleashkids.org/xsce/downloads/installer/"
 ISO="${PREFIX}/iso_root"
 PERSIST="${PREFIX}/persist"
+PREFIX="${PREFIX}"
 # upstream versions, tiny core linux
 CORE_VERSION=5.x
 
@@ -412,7 +413,7 @@ n
 p
 
 
-+1800M
++2000M
 a
 1
 t
