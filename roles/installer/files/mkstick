@@ -351,6 +351,7 @@ cp grub.cfg.target $PERSIST/target/grub.cfg
 cp grub.cfg.target.efi $PERSIST/target/grub.cfg.efi
 cp finish-install.service /$PERSIST/tce/shuttle
 cp xsce-after-installer /$PERSIST/tce/shuttle
+cp sysprep /$PERSIST/tce/shuttle
 
 # if there is a fetched image, we don't really want to destroy anything
 if [ ! -z "$IMGNAME" ];then 
@@ -413,7 +414,7 @@ n
 p
 
 
-+2400M
++3000M
 a
 1
 t
