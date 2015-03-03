@@ -49,3 +49,8 @@ Reminders for How to Create the Bootable Installer
 * Got to /mnt/sdb2/tce, and run "fetch_target". Supply ARCH and filename (netinst).
 * Move the USB stick back to desktop, and run get_mydata, which copies the rootfs to the cache, and also to unleashkids.org.
 
+Notes for Generating Raspberry Pi 2 Image
+=========================================
+* Start with minimal FC21 image (kernel,and modules subsitituted at http://www.digitaldreamtime.co.uk/images/Fidora/21/
+* Declare the platform in vars/local_vars to be "rpi2"
+
