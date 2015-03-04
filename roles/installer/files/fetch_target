@@ -8,9 +8,11 @@ source /mnt/sdb2/tce/installer.conf
 
 # are we fetching a netinst, or a configured XSCE
 #   hopefully, netinst will never create 3 partitions
+umount /dev/sda3
 mount /dev/sda3 /mnt/sda3
 if [ $? -eq 0 ]; then
    if [ -d /mnt/sda3/cache ]; then 
+      umount /dev/sda2
       mount "/dev/sda2" "/mnt/sda2"
       if [ ! $? -eq 0 ];then
 	 echo "unable to mount /dev/sda2. quitting"
@@ -34,14 +36,14 @@ else # check if this might be a netinst
    # reminder: netinst when using EFI requires first partition to be EFI
    mount /dev/sda1 /mnt/sda1
    if [ $? -eq 0 ];then
-	if [ -f /mnt/sda1/usr ];then
+	if [ -d /mnt/sda1/usr ];then
 	    SOURCEMNT="mnt/sda1"
         fi
    fi
    mount /dev/sda2 /mnt/sda2
    if [ $? -eq 0 ];then
-	if [ -f /mnt/sda1/usr ];then
-	    SOURCEMNT="mnt/sda2"
+	if [ -d /mnt/sda2/usr ];then
+	    SOURCEMNT="/mnt/sda2"
         fi
    fi
 fi
