@@ -17,7 +17,7 @@ if [ $? -eq 0 ]; then
 	 exit 1
       fi
       SOURCEMNT="/mnt/sda2"
-      LIBRARYMNT="/mnt/sda3"
+      #LIBRARYMNT="/mnt/sda3"
    else
       echo "cannot find /cache on partition 3. Quitting"
       exit 1
