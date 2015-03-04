@@ -49,13 +49,13 @@ d
 n
 p
 1
-1024
+2048
 +500M
 n
 p
 2
 
-+10G
++50G
 n
 p
 3
@@ -82,13 +82,13 @@ d
 4
 n
 1
-
+1
 +500M
 ef00
 n
 2
 
-+5G
++50G
 8300
 n
 3
@@ -114,15 +114,12 @@ mount /dev/sda2 /mnt/sda2
 #create mount points for the partitions
 mkdir -p /mnt/sda2/boot/efi
 mkdir -p /mnt/sda2/library
+# mount them
 mount /dev/sda1 /mnt/sda2/boot/efi
 mount dev/sda3 /mnt/sda2/library
 
 cd /mnt/sda2/
 tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}.tgz
-if [ "$PAYLOAD" != "netinst" ];then
-  cd /mnt/sda2/library
-  tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}-library.tgz
-fi
 cd $curdir 
 
 # create a fstab

@@ -2,12 +2,12 @@
 # this script runs on Tiny Core after target machine is set up, captures it
 
 # Using the USB as shuttle, bring the target machine onto the USB stick
-# The tinycore  mydaya.tgz is already here
 
 # the following config file communicates between desktop and tiny core
 source /mnt/sdb2/tce/installer.conf
 
 # are we fetching a netinst, or a configured XSCE
+#   hopefully, netinst will never create 3 partitions
 mount /dev/sda3 /mnt/sda3
 if [ $? -eq 0 ]; then
    if [ -d /mnt/sda3/cache ]; then 
@@ -31,15 +31,23 @@ if [ $? -eq 0 ]; then
       exit 1
   fi
 else # check if this might be a netinst
+   # reminder: netinst when using EFI requires first partition to be EFI
    mount /dev/sda1 /mnt/sda1
    if [ $? -eq 0 ];then
 	if [ -f /mnt/sda1/usr ];then
 	    SOURCEMNT="mnt/sda1"
-        else
-   	    echo "Cannot find /usr on /mnt/sda1. Quitting"
-	    exit 1
         fi
    fi
+   mount /dev/sda2 /mnt/sda2
+   if [ $? -eq 0 ];then
+	if [ -f /mnt/sda1/usr ];then
+	    SOURCEMNT="mnt/sda2"
+        fi
+   fi
+fi
+if [ -z $SOURCEMNT ]; then
+   echo "No /usr directory found"
+   exit 1
 fi
 
 
@@ -83,10 +91,14 @@ if [ ! -z ${LIBRARYMNT} ];then
 	tar czf ${dest} *
 	md5sum ${dest} ${dest}.md5.txt 
 fi
+
 #
 # get the md5 of mydata
 #	
 md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
+cp /mnt/sda2/root/anaconda-ks.cfg /mnt/sdb2/tce/
+cp /mnt/sda2/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/
+
 ls -l /mnt/sdb2/target/${FC_VER}/${THISARCH}
 tree /mnt/sdb2/target
 
