@@ -39,11 +39,13 @@ else # check if this might be a netinst
 	if [ -d /mnt/sda1/usr ];then
 	    SOURCEMNT="mnt/sda1"
         fi
+        umount /dev/sda1
    fi
    mount /dev/sda2 /mnt/sda2
    if [ $? -eq 0 ];then
 	if [ -d /mnt/sda2/usr ];then
 	    SOURCEMNT="/mnt/sda2"
+            mount /dev/sda1 /mnt/sda2/boot/efi
         fi
    fi
 fi
