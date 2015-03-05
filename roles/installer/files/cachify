@@ -49,6 +49,7 @@ if [ -f ${source}-library.tgz ];then
    rsync ${source}-library.tgz $PREFIX/persist/target/${nibble}-library.tgz
 fi
 rsync -rp /usb/tce/mydata.tgz ${PREFIX}/persist/tce/mydata.tgz
+rsync -p /usb/tce/installer.conf ${PREFIX}/persist/tce/installer.conf
 umount /usb
 rmdir /usb
 

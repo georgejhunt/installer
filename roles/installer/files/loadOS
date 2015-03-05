@@ -116,10 +116,10 @@ mkdir -p /mnt/sda2/boot/efi
 mkdir -p /mnt/sda2/library
 # mount them
 mount /dev/sda1 /mnt/sda2/boot/efi
-mount dev/sda3 /mnt/sda2/library
+mount /dev/sda3 /mnt/sda2/library
 
 cd /mnt/sda2/
-tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}.tgz
+tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
 cd $curdir 
 
 # create a fstab

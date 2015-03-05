@@ -58,8 +58,8 @@ fi
 echo
 echo "================================================================="
 echo 
-read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " THISARCH
-case $THISARCH in
+read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " PAYLOAD_ARCH
+case $PAYLOAD_ARCH in
 "i686"|"x86_64")
    ;;
 *)
@@ -68,30 +68,30 @@ case $THISARCH in
   ;;
 esac
 
-IMGNAME="netinst"
+PAYLOAD="netinst"
 gitcommit=`grep xsce_commit /mnt/sda2/etc/xsce/xsce.ini|cut -d" " -f3`
 echo "the git commit is $gitcommit"
-read -p "What should I call this root File System Image? Default=$IMGNAME: " ans
+read -p "What should I call this root File System Image? Default=$PAYLOAD: " ans
 if [ ! -z $ans ];then
-   IMGNAME=$ans
+   PAYLOAD=$ans
 fi
 # the following leaves a pointer to the configured tgz image to be incorporated
 #   into the USB stick, created by this script
-mkdir -p /mnt/sdb2/tce/$THISARCH/
-echo "IMGNAME=$IMGNAME" >> /mnt/sdb2/tce/installer.conf
-echo "THISARCH=$THISARCH" >> /mnt/sdb2/tce/installer.conf
+mkdir -p /mnt/sdb2/tce/$PAYLOAD_ARCH/
+echo "PAYLOAD=$PAYLOAD" >> /mnt/sdb2/tce/installer.conf
+echo "PAYLOAD_ARCH=$PAYLOAD_ARCH" >> /mnt/sdb2/tce/installer.conf
 
 # the presence of rh-ifcg files confuses starting on new hardware, delete
 rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
 
 cd ${SOURCEMNT}
-dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${IMGNAME}.tgz
+dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
 tar czf ${dest} *
 md5sum ${dest} ${dest}.md5.txt 
  
 if [ ! -z ${LIBRARYMNT} ];then
 	cd ${LIBRARYMNT} 
-        dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${IMGNAME}-library.tgz
+        dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}-library.tgz
 	tar czf ${dest} *
 	md5sum ${dest} ${dest}.md5.txt 
 fi
@@ -103,6 +103,6 @@ md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
 cp /mnt/sda2/root/anaconda-ks.cfg /mnt/sdb2/tce/
 cp /mnt/sda2/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/
 
-ls -l /mnt/sdb2/target/${FC_VER}/${THISARCH}
+ls -l /mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}
 tree /mnt/sdb2/target
 
