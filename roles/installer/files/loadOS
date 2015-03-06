@@ -13,6 +13,7 @@ PAYLOAD_ARCH="x86_64"
 # get the variables that are being passed back and forth
 #  in particular, PAYLOAD is the name of the tgz image
 source /mnt/sdb2/tce/installer.conf
+# TARLIB controls whether a separate library tar is generated
 
 SRCDIR=$(cd `dirname ${0}`; pwd)
 curdir=`pwd`
@@ -118,14 +119,15 @@ mkdir -p /mnt/sda2/library
 mount /dev/sda1 /mnt/sda2/boot/efi
 mount /dev/sda3 /mnt/sda2/library
 
+sleep 3
 # put the root file system in place
 cd /mnt/sda2/
-tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
+tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
 
 # need to put the library contents in place via a separate tar file
-if [ "$PAYLOAD" != "netinst" ];then
+if [ "$PAYLOAD" != "netinst" -a "$TARLIB" == "true" ];then
   cd /mnt/sda2/library
-  tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}-library.tgz
+  tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}-library.tgz
 fi
 
 cd $curdir 

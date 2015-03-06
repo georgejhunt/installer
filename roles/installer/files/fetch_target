@@ -96,15 +96,15 @@ done
 
 # now do the taring
 dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
-tar czf ${dest} "$list"
+tar -czf ${dest} *
 md5sum ${dest} ${dest}.md5.txt 
  
 md5sum ${dest} ${dest}.md5.txt 
  
-if [ ! -z ${LIBRARYMNT} ];then
+if [ ! -z ${LIBRARYMNT} -a "$TARLIB" == "true" ];then
 	cd ${LIBRARYMNT} 
         dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}-library.tgz
-	tar czf ${dest} *
+	tar -czf ${dest} *
 	md5sum ${dest} ${dest}.md5.txt 
 fi
 
