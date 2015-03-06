@@ -118,8 +118,16 @@ mkdir -p /mnt/sda2/library
 mount /dev/sda1 /mnt/sda2/boot/efi
 mount /dev/sda3 /mnt/sda2/library
 
+# put the root file system in place
 cd /mnt/sda2/
 tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
+
+# need to put the library contents in place via a separate tar file
+if [ "$PAYLOAD" != "netinst" ];then
+  cd /mnt/sda2/library
+  tar xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}-library.tgz
+fi
+
 cd $curdir 
 
 # create a fstab

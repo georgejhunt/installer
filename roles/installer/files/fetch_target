@@ -19,7 +19,7 @@ if [ $? -eq 0 ]; then
 	 exit 1
       fi
       SOURCEMNT="/mnt/sda2"
-      #LIBRARYMNT="/mnt/sda3"
+      LIBRARYMNT="/mnt/sda3"
    else
       echo "cannot find /cache on partition 3. Quitting"
       exit 1
@@ -32,7 +32,7 @@ if [ $? -eq 0 ]; then
       echo
       exit 1
   fi
-else # check if this might be a netinst
+else # could not mout sda3, check if this might be a netinst
    # reminder: netinst when using EFI requires first partition to be EFI
    mount /dev/sda1 /mnt/sda1
    if [ $? -eq 0 ];then
@@ -84,9 +84,21 @@ echo "PAYLOAD_ARCH=$PAYLOAD_ARCH" >> /mnt/sdb2/tce/installer.conf
 # the presence of rh-ifcg files confuses starting on new hardware, delete
 rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
 
+# make a list that includes all root level directories, except for library
 cd ${SOURCEMNT}
+list=
+for d in `ls -d1 *`; do
+  if [ "$d" == "library" ]; then
+    continue
+  fi
+  list="$list $d"
+done
+
+# now do the taring
 dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
-tar czf ${dest} *
+tar czf ${dest} "$list"
+md5sum ${dest} ${dest}.md5.txt 
+ 
 md5sum ${dest} ${dest}.md5.txt 
  
 if [ ! -z ${LIBRARYMNT} ];then
