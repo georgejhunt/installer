@@ -37,9 +37,8 @@ else # could not mout sda3, check if this might be a netinst
    mount /dev/sda1 /mnt/sda1
    if [ $? -eq 0 ];then
 	if [ -d /mnt/sda1/usr ];then
-	    SOURCEMNT="mnt/sda1"
+	    SOURCEMNT="/mnt/sda1"
         fi
-        umount /dev/sda1
    fi
    mount /dev/sda2 /mnt/sda2
    if [ $? -eq 0 ];then
