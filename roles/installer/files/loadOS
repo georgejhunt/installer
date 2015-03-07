@@ -50,7 +50,7 @@ d
 n
 p
 1
-2048
+1
 +500M
 n
 p
@@ -119,9 +119,14 @@ mkdir -p /mnt/sda2/library
 mount /dev/sda1 /mnt/sda2/boot/efi
 mount /dev/sda3 /mnt/sda2/library
 
-sleep 3
+sleep 1
+# I'm hoping that this operation will wait until the mount is completed
+cd /mnt/sda2/library
+mkdir -p cache
+
 # put the root file system in place
 cd /mnt/sda2/
+until [ -d /mnt/sda2/library/cache ]; do sleep .25; done
 tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
 
 # need to put the library contents in place via a separate tar file
@@ -142,7 +147,7 @@ EOF
 # now install the grub mbr loader, and the grub EFI loader
 # following set up the mbr boot requirements
 grub-install --boot-directory=/mnt/sda2/boot /dev/sda
-cp ${SRCDIR}/grub.cfg /mnt/sda2/boot/grub/grub.cfg
+cp ${SRCDIR}/grub.cfg.target /mnt/sda2/boot/grub/grub.cfg
 
 # following are attempting to set up EFI boot requirements
 #mkdir -p /mnt/sda1/EFI
@@ -151,7 +156,7 @@ cp ${SRCDIR}/grub.cfg /mnt/sda2/boot/grub/grub.cfg
 #mount /mnt/sdb1/boot/images/efiboot.img /home/tc/img
 #cp -r /home/tc/img/* /mnt/sda1/
 grub-install --target=i386-efi --efi-directory=/mnt/sda2/boot/efi --bootloader-id=boot --boot-directory=/mnt/sda2/boot --recheck 
-cp ${SRCDIR}/grub.cfg.efi /mnt/sda1/EFI/BOOT/grub.cfg
+cp ${SRCDIR}/grub.cfg.target.efi /mnt/sda1/EFI/BOOT/grub.cfg
 
 # make symbolic links for the kernel, and initramfs
 kernel=`find /mnt/sda2/boot | grep /vmlinuz-3`

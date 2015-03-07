@@ -82,8 +82,8 @@ menuentry 'Fedora, with Linux 3.18.7-200.fc21.x86_64' --class fedora --class gnu
 	else
 	  search --no-floppy --label rootfs --set=root 
 	fi
-	linuxefi /boot/vmlinuz-3.18.7-200.fc21.x86_64 root=LABEL=rootfs ro rhgb quiet LANG=en_US.UTF-8
-	initrdefi /boot/initramfs-3.18.7-200.fc21.x86_64.img
+	linux /boot/vmlinuz-3.18.7-200.fc21.x86_64 root=LABEL=rootfs ro rhgb quiet LANG=en_US.UTF-8
+	initrd /boot/initramfs-3.18.7-200.fc21.x86_64.img
 }
 menuentry 'Fedora, with Linux 0-rescue-0fdf49f354474290aa4edb9d7a5270a8' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-0fdf49f354474290aa4edb9d7a5270a8-advanced-ba5bac6c-8e7f-4629-9c27-bd2ecbce5813' {
 	load_video
@@ -92,7 +92,7 @@ menuentry 'Fedora, with Linux 0-rescue-0fdf49f354474290aa4edb9d7a5270a8' --class
 	insmod ext2
 	set root='hd0,gpt2'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2  ba5bac6c-8e7f-4629-9c27-bd2ecbce5813
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2  ba5bac6c-8e7f-4629-9c27-bd2ecbce5813
 	else
 	  search --no-floppy --fs-uuid --set=root ba5bac6c-8e7f-4629-9c27-bd2ecbce5813
 	fi
