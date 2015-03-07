@@ -147,7 +147,7 @@ EOF
 # now install the grub mbr loader, and the grub EFI loader
 # following set up the mbr boot requirements
 grub-install --boot-directory=/mnt/sda2/boot /dev/sda
-cp ${SRCDIR}/grub.cfg.target /mnt/sda2/boot/grub/grub.cfg
+cp ${SRCDIR}/grub.cfg /mnt/sda2/boot/grub/grub.cfg
 
 # following are attempting to set up EFI boot requirements
 #mkdir -p /mnt/sda1/EFI
@@ -156,7 +156,7 @@ cp ${SRCDIR}/grub.cfg.target /mnt/sda2/boot/grub/grub.cfg
 #mount /mnt/sdb1/boot/images/efiboot.img /home/tc/img
 #cp -r /home/tc/img/* /mnt/sda1/
 grub-install --target=i386-efi --efi-directory=/mnt/sda2/boot/efi --bootloader-id=boot --boot-directory=/mnt/sda2/boot --recheck 
-cp ${SRCDIR}/grub.cfg.target.efi /mnt/sda1/EFI/BOOT/grub.cfg
+cp ${SRCDIR}/grub.cfg.efi /mnt/sda1/EFI/BOOT/grub.cfg
 
 # make symbolic links for the kernel, and initramfs
 kernel=`find /mnt/sda2/boot | grep /vmlinuz-3`
@@ -171,7 +171,7 @@ mkdir -p /mnt/sda3/cache
 mkdir -p /mnt/sda2/opt/schoolserver/xsce/scripts/installer
 cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/sda2/opt/schoolserver/xsce/scripts/installer/
 cp /mnt/sdb2/tce/shuttle/sysprep /mnt/sda2/opt/schoolserver/xsce/scripts/installer/
-ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/sdb2/usr/local/sbin/sysprep
+ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/sda2/usr/local/sbin/sysprep
 cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/sda2/etc/systemd/system/
 # done!
 
