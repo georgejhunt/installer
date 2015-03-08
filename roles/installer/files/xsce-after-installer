@@ -2,6 +2,6 @@
 # script to run stuff that memorizes hardware addresses of dongles, maybe generates
 #   unique software keys, and sets everythin up for headless access
 ansible-playbook -i /opt/schoolserver/xsce/ansible_hosts \
-	/opt/schoolserver/xsce/xsce.yml --connection=local --tags="network,gateway"
+	/opt/schoolserver/xsce/xsce.yml --connection=local --tags="prep,network,gateway"
 systemctl disable finish-install.service
 

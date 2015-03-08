@@ -40,7 +40,7 @@ cd ${PREFIX}
 
 
 # go grab the data
-nibble=${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${PAYLOAD}
+nibble=${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}
 source=/usb/target/${nibble}
 if [ -f ${source}.tgz ];then
    rsync ${source}.tgz $PREFIX/persist/target/${nibble}.tgz
