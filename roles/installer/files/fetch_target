@@ -68,7 +68,7 @@ case $PAYLOAD_ARCH in
 esac
 
 PAYLOAD="netinst"
-gitcommit=`grep xsce_commit /mnt/sda2/etc/xsce/xsce.ini|cut -d" " -f3`
+gitcommit=`grep xsce_commit ${SOURCEMNT}/etc/xsce/xsce.ini|cut -d" " -f3`
 echo "the git commit is $gitcommit"
 read -p "What should I call this root File System Image? Default=$PAYLOAD: " ans
 if [ ! -z $ans ];then
