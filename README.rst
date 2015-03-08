@@ -21,7 +21,7 @@ mkstick
 loadOS
   Is copied onto the USB stick, and run by the Tiny Core operating system to partition, format, and copy the target machine root file system, and set up the boot loader for that OS.
 
-get_mydata -- Also gets configured RootFS
+cachify -- Also gets configured RootFS
   Also runs on the Tiny Core OS, to collect up the fully configured target machine so that it may be copied up to the cloud, and downloaded by others, as an offine install. There is interaction which records the fedora version, and architecture (32 or 64 bit) in the file /tce/tgzimagename. Once this file exists, the functin of "mkstick" changes. Thereafter "mkstick" replicates data out of the cache for the purpose of replicating offline install sticks.
 
 extlinux.conf
@@ -41,6 +41,7 @@ Reminders for How to Create the Bootable Installer
 * Install each, selecting to generate one partition (/). Do not do automatic partitioning, and select "standard" rather than "LVM" partition type.
 * Set root password (my first images have root password set to fedora), and create xsce-admin user/password.
 * Turn on "keepcache=1" in /etc/yum.conf.
+
   1. install git, ansible
   #. add network adapter, if gateway autoconfig is wanted
   #. clone xsce into /opt/schoolserver, cd to xsce, runansible
@@ -51,7 +52,7 @@ Reminders for How to Create the Bootable Installer
 
 * Start up Tiny Core.
 * Got to /mnt/sdb2/tce, and run "fetch_target". Supply ARCH and filename (netinst).
-* Move the USB stick back to desktop, and run get_mydata, which copies the rootfs to the cache, and also to unleashkids.org.
+* Move the USB stick back to desktop, and run cachify, which copies the rootfs to the cache, and also to unleashkids.org.
 
 Notes for Generating Raspberry Pi 2 Image
 =========================================
