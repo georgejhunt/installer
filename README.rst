@@ -15,7 +15,12 @@ Once the USB is available, set the loader to boot in MBR (perhaps called legacy)
 
 The USB stick is relatively dangrous is left laying around. If a machine is set to boot from USB stick, and if this USB stick is in the machine when it is booting, it would wipe out whatever is on the hard disk.  So I have forced the user to have a monitor, and keyboard attached, and to confirm that the hard disk should be 'erased'.
 
+The initial image may need some tweaking so that the networking autocofigures correctly. After initial boot, log on as root with passwork fedora, connect the network adapters that will be used, and run the following commands::
+  
+  cd /opt/schoolserver/xsce/
+  ./runtags prep,network,gateway
 
+ 
 Overall Strategy
 ----------------
 The code for creating an offline install is copied by ansible to {{ XSCE_BASE }}/xsce/scripts/installer/.
