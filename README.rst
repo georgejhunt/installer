@@ -2,6 +2,20 @@
 How to Install XSCE Offline
 ===========================
 
+Instructions for Using Image Downloaded from Unleashkids.org
+------------------------------------------------------------
+The download is 2GB, and with a fairly fast internet connection can take more that 20 minutes. The images are located at http://download.unleashkids.org/xsce/downloads/installer/ 
+
+I discovered that compressing only saved 10%, and added additional complexity to the process.
+
+On a linux machine, once the image is local, copy the image to a USB stick by doing the following
+  dd if=<downloaded image file> of=<device name without any partition -- for example /dev/sdb> bs=1M
+
+Once the USB is available, set the loader to boot in MBR (perhaps called legacy) mode, and set the boot preference to boot first from USB stick.
+
+The USB stick is relatively dangrous is left laying around. If a machine is set to boot from USB stick, and if this USB stick is in the machine when it is booting, it would wipe out whatever is on the hard disk.  So I have forced the user to have a monitor, and keyboard attached, and to confirm that the hard disk should be 'erased'.
+
+
 Overall Strategy
 ----------------
 The code for creating an offline install is copied by ansible to {{ XSCE_BASE }}/xsce/scripts/installer/.
