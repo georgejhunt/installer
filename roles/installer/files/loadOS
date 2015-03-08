@@ -173,6 +173,7 @@ cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/sda2/opt/schoolserver/xsce/sc
 cp /mnt/sdb2/tce/shuttle/sysprep /mnt/sda2/opt/schoolserver/xsce/scripts/installer/
 ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/sda2/usr/local/sbin/sysprep
 cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/sda2/etc/systemd/system/
-# done!
-
+echo
+echo done!
+echo
 # vim: ts=4 et

@@ -54,9 +54,13 @@ umount /usb
 rmdir /usb
 
 read -p "Hit <ctl>c to abort copying to unleash_kids"
+cd ${PREFIX}/persist
 rsync  tce/mydata.tgz george@unleashkids.org:/home/george
 md5sum tce/mydata.tgz > tce/mydata.tgz.md5.txt
 rsync  tce/mydata.tgz.md5.txt george@unleashkids.org:/home/george
+exit 0
+
+
 if [ -d tce/i686 ];then
    rsync tce/i686 george@unleashkids.org:/home/george
 fi

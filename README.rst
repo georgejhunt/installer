@@ -39,12 +39,16 @@ Reminders for How to Create the Bootable Installer
 * Download the netinstall versions of Fedora Core. On FC21, these are classified as Server installs.
 * "dd" the version (i686 or x86_64) onto a USB stick. (this is normal install onnew hardware)
 * Install each, selecting to generate one partition (/). Do not do automatic partitioning, and select "standard" rather than "LVM" partition type.
-* Set root password, and create xsce-admin user/password.
+* Set root password (my first images have root password set to fedora), and create xsce-admin user/password.
 * Turn on "keepcache=1" in /etc/yum.conf.
-* On a desktop, or laptop, perhaps in a virtual machine, load the FC OS version that will become the target version
-** install git, ansible
-** clone xsce into /opt/schoolserver, runtags installer
-** "./runtags installer" -- lots of downloads, allow 50 minutes, or more if slow internet connection -- only takes long time first time populating cache.
+  1. install git, ansible
+  #. add network adapter, if gateway autoconfig is wanted
+  #. clone xsce into /opt/schoolserver, cd to xsce, runansible
+  #. git clone https://github.com/XSCE/installer 
+  #. "./runtags installer" 
+  #. cd to /opt/schoolserver/xsce/scripts/installer
+  #. "./mkstick" -- lots of downloads, allow 50 minutes, or more if slow internet connection -- only takes long time first time populating cache.
+
 * Start up Tiny Core.
 * Got to /mnt/sdb2/tce, and run "fetch_target". Supply ARCH and filename (netinst).
 * Move the USB stick back to desktop, and run get_mydata, which copies the rootfs to the cache, and also to unleashkids.org.
