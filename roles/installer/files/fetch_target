@@ -76,7 +76,7 @@ if [ ! -z $ans ];then
 fi
 # the following leaves a pointer to the configured tgz image to be incorporated
 #   into the USB stick, created by this script
-mkdir -p /mnt/sdb2/tce/$PAYLOAD_ARCH/
+mkdir -p /mnt/sdb2/target/${FC_VER}//$PAYLOAD_ARCH/
 echo "PAYLOAD=$PAYLOAD" >> /mnt/sdb2/tce/installer.conf
 echo "PAYLOAD_ARCH=$PAYLOAD_ARCH" >> /mnt/sdb2/tce/installer.conf
 

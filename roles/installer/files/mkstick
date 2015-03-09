@@ -348,7 +348,6 @@ isohybrid ../$STICKNAME.iso --partok
 read -t 10 -p "\n\nI'm about to write $dev OK [Y/n]:" ans
 case $ans in
 "y"|"Y")
-    break
     ;;
 *)
     if [ ! -z $ans ];then
