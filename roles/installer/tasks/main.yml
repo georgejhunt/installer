@@ -30,6 +30,7 @@
       - loadOS
       - mkstick
       - isolinux.cfg
+      - grub.cfg.i686
       - grub.cfg.target
       - grub.cfg.target.efi
       - cachify
