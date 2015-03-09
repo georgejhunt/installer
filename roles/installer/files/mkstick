@@ -415,8 +415,9 @@ fi
 cp -p $PERSIST/target/loadOS /tmp/data/target
 cp -p $PERSIST/target/grub.cfg /tmp/data/target
 cp -p $PERSIST/target/grub.cfg.efi /tmp/data/target
-cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
-
+if [ ! -z ${PAYLOAD} ];then
+  cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
+fi
 umount /tmp/data
 rmdir /tmp/data
 # vim: tabstop=4 expandtabs shiftwidth=4 softtabstop=4
