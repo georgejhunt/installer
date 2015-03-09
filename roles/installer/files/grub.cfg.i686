@@ -69,37 +69,36 @@ fi
 ### END /etc/grub.d/00_header ###
 
 ### BEGIN /etc/grub.d/10_linux ###
-menuentry 'Fedora, with Linux 3.18.7-200.fc21.x86_64' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.18.7-200.fc21.x86_64-advanced-ba5bac6c-8e7f-4629-9c27-bd2ecbce5813' {
+menuentry 'Fedora, with Linux 3.18.7-200.fc21.i686+PAE' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.18.7-200.fc21.i686+PAE-advanced-1e169347-e8b7-44d4-94cd-8be2b049b33a' {
 	load_video
 	set gfxpayload=keep
 	insmod gzio
-	insmod part_gpt
 	insmod part_msdos
 	insmod ext2
 	set root='hd0,msdos2'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos  
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos2 --hint='hd0,msdos2'  1e169347-e8b7-44d4-94cd-8be2b049b33a
 	else
-	  search --no-floppy --label rootfs --set=root 
+	  search --no-floppy --fs-uuid --set=root 1e169347-e8b7-44d4-94cd-8be2b049b33a
 	fi
-	linux /boot/vmlinuz-3.18.7-200.fc21.x86_64 root=LABEL=rootfs ro rhgb quiet LANG=en_US.UTF-8
-	initrd /boot/initramfs-3.18.7-200.fc21.x86_64.img
+	linux16 /boot/vmlinuz-3.18.7-200.fc21.i686+PAE root=/dev/sda2 ro rhgb quiet 
+	initrd16 /boot/initramfs-3.18.7-200.fc21.i686+PAE.img
 }
-menuentry 'Fedora, with Linux 0-rescue-0fdf49f354474290aa4edb9d7a5270a8' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-0fdf49f354474290aa4edb9d7a5270a8-advanced-ba5bac6c-8e7f-4629-9c27-bd2ecbce5813' {
+menuentry 'Fedora, with Linux 0-rescue-ed03b39a9e654a1bb661f9c62923ed55' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-ed03b39a9e654a1bb661f9c62923ed55-advanced-1e169347-e8b7-44d4-94cd-8be2b049b33a' {
 	load_video
 	insmod gzio
-	insmod part_gpt
+	insmod part_msdos
 	insmod ext2
-	set root='hd0,gpt2'
+	set root='hd0,msdos2'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2  ba5bac6c-8e7f-4629-9c27-bd2ecbce5813
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos2 --hint='hd0,msdos2'  1e169347-e8b7-44d4-94cd-8be2b049b33a
 	else
-	  search --no-floppy --fs-uuid --set=root ba5bac6c-8e7f-4629-9c27-bd2ecbce5813
+	  search --no-floppy --fs-uuid --set=root 1e169347-e8b7-44d4-94cd-8be2b049b33a
 	fi
-	linux /boot/vmlinuz-0-rescue-0fdf49f354474290aa4edb9d7a5270a8 root=LABEL=boot ro rhgb quiet
-	initrd /boot/initramfs-0-rescue-0fdf49f354474290aa4edb9d7a5270a8.img
+	linux16 /boot/vmlinuz-0-rescue-ed03b39a9e654a1bb661f9c62923ed55 root=/dev/sda2 ro rhgb quiet 
+	initrd16 /boot/initramfs-0-rescue-ed03b39a9e654a1bb661f9c62923ed55.img
 }
-
+if [ "x$default" = 'Fedora, with Linux 3.18.7-200.fc21.i686+PAE' ]; then default='Advanced options for Fedora>Fedora, with Linux 3.18.7-200.fc21.i686+PAE'; fi;
 ### END /etc/grub.d/10_linux ###
 
 ### BEGIN /etc/grub.d/20_linux_xen ###

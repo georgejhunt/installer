@@ -413,6 +413,7 @@ else
 fi
 cp -p $PERSIST/target/loadOS /tmp/data/target
 cp -p $PERSIST/target/grub.cfg /tmp/data/target
+cp -p $PERSIST/target/grub.cfg.i686 /tmp/data/target
 cp -p $PERSIST/target/grub.cfg.efi /tmp/data/target
 if [ ! -z ${PAYLOAD} ];then
   cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
