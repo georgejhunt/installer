@@ -4,6 +4,9 @@
 # remove all the network ifcfg files except lo
 find /etc/sysconfig/network-scripts -name "ifcfg-*" -not -path "./ifcfg-lo" | xargs rm -rf 
 
+# remove keys in root
+rm -rf /root/.ssh/*
+
 # put a systemd unit file in the startup queue, removes itself after execution
 systemctl enable finish-install.service
 
