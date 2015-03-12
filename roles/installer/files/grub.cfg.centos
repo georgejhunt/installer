@@ -81,7 +81,7 @@ menuentry 'CentOS Linux (3.10.0-123.20.1.el7.x86_64) 7 (Core)' --class centos --
 	else
 	  search --no-floppy --label rootfs --set=root 
 	fi
-	linux16 /boot/vmlinuz-3.10.0-123.20.1.el7.x86_64 root=LABEL=rootrs  ro vconsole.keymap=us crashkernel=auto  vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_US.UTF-8 intel-pstate=disable
+	linux16 /boot/vmlinuz-3.10.0-123.20.1.el7.x86_64 root=LABEL=rootfs  ro vconsole.keymap=us crashkernel=auto  vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_US.UTF-8 intel_pstate=disable
 	initrd16 /boot/initramfs-3.10.0-123.20.1.el7.x86_64.img
 }
 menuentry 'CentOS Linux, with Linux 3.10.0-123.el7.x86_64' --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-123.el7.x86_64-advanced-66600fc5-5422-4881-b770-d42350c25fd4' {
@@ -96,7 +96,7 @@ menuentry 'CentOS Linux, with Linux 3.10.0-123.el7.x86_64' --class centos --clas
 	else
 	  search --no-floppy --fs-uuid --set=root 66600fc5-5422-4881-b770-d42350c25fd4
 	fi
-	linux16 /boot/vmlinuz-3.10.0-123.el7.x86_64 root=UUID=66600fc5-5422-4881-b770-d42350c25fd4 ro vconsole.keymap=us crashkernel=auto  vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_US.UTF-8
+	linux16 /boot/vmlinuz-3.10.0-123.el7.x86_64 root=LABEL=rootfs ro vconsole.keymap=us crashkernel=auto  vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_US.UTF-8 intel_pstate=disable
 	initrd16 /boot/initramfs-3.10.0-123.el7.x86_64.img
 }
 menuentry 'CentOS Linux, with Linux 0-rescue-1de568d13f304043b87a35cf7a828d56' --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-1de568d13f304043b87a35cf7a828d56-advanced-66600fc5-5422-4881-b770-d42350c25fd4' {
