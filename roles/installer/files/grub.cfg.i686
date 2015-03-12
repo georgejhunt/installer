@@ -77,11 +77,11 @@ menuentry 'Fedora, with Linux 3.18.7-200.fc21.i686+PAE' --class fedora --class g
 	insmod ext2
 	set root='hd0,msdos2'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos2 --hint='hd0,msdos2'  1e169347-e8b7-44d4-94cd-8be2b049b33a
+	  search --no-floppy  --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos2 --hint='hd0,msdos
 	else
-	  search --no-floppy --fs-uuid --set=root 1e169347-e8b7-44d4-94cd-8be2b049b33a
+	  search --no-floppy --label rootfs --set=root 
 	fi
-	linux16 /boot/vmlinuz-3.18.7-200.fc21.i686+PAE root=/dev/sda2 ro rhgb quiet 
+	linux16 /boot/vmlinuz-3.18.7-200.fc21.i686+PAE root=LABEL=rootfs ro rhgb quiet 
 	initrd16 /boot/initramfs-3.18.7-200.fc21.i686+PAE.img
 }
 menuentry 'Fedora, with Linux 0-rescue-ed03b39a9e654a1bb661f9c62923ed55' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-ed03b39a9e654a1bb661f9c62923ed55-advanced-1e169347-e8b7-44d4-94cd-8be2b049b33a' {
@@ -95,7 +95,7 @@ menuentry 'Fedora, with Linux 0-rescue-ed03b39a9e654a1bb661f9c62923ed55' --class
 	else
 	  search --no-floppy --fs-uuid --set=root 1e169347-e8b7-44d4-94cd-8be2b049b33a
 	fi
-	linux16 /boot/vmlinuz-0-rescue-ed03b39a9e654a1bb661f9c62923ed55 root=/dev/sda2 ro rhgb quiet 
+	linux16 /boot/vmlinuz-0-rescue-ed03b39a9e654a1bb661f9c62923ed55 root=LABEL=rootfs ro rhgb quiet 
 	initrd16 /boot/initramfs-0-rescue-ed03b39a9e654a1bb661f9c62923ed55.img
 }
 if [ "x$default" = 'Fedora, with Linux 3.18.7-200.fc21.i686+PAE' ]; then default='Advanced options for Fedora>Fedora, with Linux 3.18.7-200.fc21.i686+PAE'; fi;
