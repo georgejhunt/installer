@@ -38,6 +38,7 @@ else # could not mout sda3, check if this might be a netinst
    if [ $? -eq 0 ];then
 	if [ -d /mnt/sda1/usr ];then
 	    SOURCEMNT="/mnt/sda1"
+	    LIBRARYMNT="/mnt/sda1/library"
         fi
    fi
    mount /dev/sda2 /mnt/sda2
@@ -95,9 +96,12 @@ done
 
 # now do the taring
 dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
-tar -czf ${dest} *
-md5sum ${dest} ${dest}.md5.txt 
- 
+
+if [  "$TARLIB" == "true" ];then
+    tar -czf ${dest} ${list}
+else
+    tar -czf ${dest} *
+fi
 md5sum ${dest} ${dest}.md5.txt 
  
 if [ ! -z ${LIBRARYMNT} -a "$TARLIB" == "true" ];then

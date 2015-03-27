@@ -39,7 +39,7 @@ PAYLOAD_ARCH="x86_64"
 
 # ARCH is the tinycore arch -- we'll do everything with i686
 ARCH="x86"
-TARLIB="false"	
+TARLIB="true"	
 EOF
 
 chmod 755 $PREFIX/persist/tce/installer.conf
@@ -391,7 +391,7 @@ n
 p
 
 
-+7000M
++3600M
 a
 1
 t
