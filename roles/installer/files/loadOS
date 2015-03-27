@@ -132,7 +132,7 @@ tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD
 # need to put the library contents in place via a separate tar file
 if [ "$PAYLOAD" != "netinst" -a "$TARLIB" == "true" ];then
   cd /mnt/sda2/library
-  tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}-library.tgz
+  tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}-library.tgz
 fi
 
 cd $curdir 
