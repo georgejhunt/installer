@@ -15,10 +15,22 @@ Once the USB is available, set the loader to boot in MBR (perhaps called legacy)
 
 The USB stick is relatively dangrous is left laying around. If a machine is set to boot from USB stick, and if this USB stick is in the machine when it is booting, it would wipe out whatever is on the hard disk.  So I have forced the user to have a monitor, and keyboard attached, and to confirm that the hard disk should be 'erased'.
 
-The initial image may need some tweaking so that the networking autocofigures correctly. After initial boot, log on as root with passwork fedora, connect the network adapters that will be used, and run the following commands::
+The initial image may need some tweaking so that the networking autoconfigures correctly. Edit /opt/schoolserver/xsce/vars/local_vars.yml for the mode of schoolserver you want::
+  
+  * Appliance mode -- operates within existing infrastructure, server has no dhcpd, named, squid, firewall
+     xsce_wan_enabled: True
+     xsce_lan_enabled: False
+  * Lan-controller mode -- no gateway, no squid, one ethernet port (or USB wifi dongle) but has dhcpd, named
+     xsce_wan_enabled: False
+     xsce_lan_enabled: True
+  * Gateway mode -- all of above enabled
+     xsce_wan_enabled: True
+     xsce_lan_enabled: True
+     
+Log on as root with password: fedora (the centos image uses password:centos), connect the network adapters that will be used, make the selection of mode in local_vars, and run the following commands::
   
   cd /opt/schoolserver/xsce/
-  ./runtags prep,network,gateway
+  ./runtags prep,network,gateway (the most current master eliminates gateway -- will require only "./runtags network")
 
  
 Overall Strategy
