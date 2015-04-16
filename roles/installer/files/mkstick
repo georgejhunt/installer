@@ -15,8 +15,8 @@ mkdir -p $PREFIX/persist/tce
 
 if [ ! -f $PREFIX/persist/tce/installer.conf ]; then
 cat << EOF > $PREFIX/persist/tce/installer.conf
-OS="centos"
-#OS="fedora"
+#OS="centos"
+OS="fedora"
 FC_VER="21"
 FC_URL="http://mirrors.usc.edu/pub/linux/distributions/fedora/linux/releases/${FC_VER}/Fedora/${FC_ARCH}/os/images/"
 UK_URL="http://download.unleashkids.org/xsce/downloads/installer/"
