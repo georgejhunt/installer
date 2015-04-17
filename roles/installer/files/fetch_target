@@ -116,7 +116,8 @@ fi
 #	
 md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
 cp /mnt/sda2/root/anaconda-ks.cfg /mnt/sdb2/tce/
-cp /mnt/sda2/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/
+cp /mnt/sda2/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/grub.cfg.efi
+cp /mnt/sda2/boot/grub/grub.cfg /mnt/sdb2/tce/grub.cfg.mbr
 
 ls -l /mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}
 tree /mnt/sdb2/target

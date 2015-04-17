@@ -32,9 +32,9 @@ CORE_INITRD_X86=core
 CORE_KERNEL_X86=vmlinuz
 #CORE_KERNEL_X86=vmlinuz64
 CACHE=yes
-#PAYLOAD="netinst"
+PAYLOAD="netinst"
 # absence of PAYLOAD definition prevents any download
-PAYLOAD=
+#PAYLOAD=
 PAYLOAD_ARCH="x86_64"
 
 # ARCH is the tinycore arch -- we'll do everything with i686
@@ -315,9 +315,9 @@ exec  > tee -a $LOGFILE
 
 if [ "$PAYLOAD" == "netinst" ];then  # download an image from XSCE repository
     if [ "$PAYLOAD_ARCH" == "i686" ]; then
-	get_rootfs i686 i686fc${FC_VER}${PAYLOAD}.tgz
+	get_rootfs i686 i686fc${FC_VER}_${PAYLOAD}.tgz
     else
-	get_rootfs x86_64 x86_64fc${FC_VER}${PAYLOAD}.tgz
+	get_rootfs x86_64 x86_64fc${FC_VER}_${PAYLOAD}.tgz
     fi
 fi
 
@@ -391,7 +391,7 @@ n
 p
 
 
-+3600M
++1600M
 a
 1
 t
