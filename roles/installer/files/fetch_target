@@ -38,7 +38,7 @@ else # could not mout sda3, check if this might be a netinst
    if [ $? -eq 0 ];then
 	if [ -d /mnt/sda1/usr ];then
 	    SOURCEMNT="/mnt/sda1"
-	    LIBRARYMNT="/mnt/sda1/library"
+	    LIBRARYMNT=""
         fi
    fi
    mount /dev/sda2 /mnt/sda2
@@ -115,9 +115,10 @@ fi
 # get the md5 of mydata
 #	
 md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
-cp /mnt/sda2/root/anaconda-ks.cfg /mnt/sdb2/tce/
-cp /mnt/sda2/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/grub.cfg.efi
-cp /mnt/sda2/boot/grub/grub.cfg /mnt/sdb2/tce/grub.cfg.mbr
+cp ${SOURCEMOUNT}/root/anaconda-ks.cfg /mnt/sdb2/tce/
+cp ${SOURCEMOUNT}/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/grub.cfg.efi
+cp ${SOURCEMOUNT}/boot/grub/grub.cfg /mnt/sdb2/tce/grub.cfg.mbr
+cp ${SOURCEMOUNT}/boot/grub2/grub.cfg /mnt/sdb2/tce/grub.cfg.mbr
 
 ls -l /mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}
 tree /mnt/sdb2/target
