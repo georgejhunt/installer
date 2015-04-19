@@ -1,19 +1,65 @@
 #!/bin/bash -x
 
-# first part makes iso image from tiny core, second part sets up data for XSCE target
-#   Last part creates the image which gets copied onto USB stick
+# first part makes iso image from tiny core,c
+# second part sets up data for XSCE target
+# Last part creates the image which gets copied onto USB stick
+
 # somewhat based on James Cameron's mktinycorxo at
 # http://dev.laptop.org/git/users/quozl/mktinycorexo
 # Stick required is at least 2G USB
 
 PREFIX="/root/installer"
 mkdir -p $PREFIX/persist/tce
+NEWPAYLOAD_ARCH=
+PAYLOAD=netinst
 
+# Let user decide whether to continue with last installer operation
+# Get the previous state
+if [ -f $PREFIX/persist/tce/installer.conf ]; then
+	source $PREFIX/persist/tce/installer.conf
+
+	echo
+	echo
+	read  -p  "The Payload from last operation was $PAYLOAD. Change y/N: " ans
+	echo "  --and the architecture was $PAYLOAD_ARCH"
+	case $ans in
+	y|Y)
+		read  -p "New value for payload (default=netinst)? " ans
+		if [ "$ans" == "" ]; then
+			NEWPAYLOAD=netinst
+		else
+			NEWPAYLOAD=$ans
+		fi
+		;;
+	*)	;;
+	esac
+
+	read  -p  "The arch from last operation was $PAYLOAD_ARCH. Change y/N: " ans
+	case $ans in
+	y|Y)
+		read  -p "New value for payload (default=x86_64)? " ans
+		if [ "$ans" == "" ]; then
+			NEWPAYLOAD_ARCH=x86_64
+		else
+			NEWPAYLOAD_ARCH=$ans
+		fi
+		;;
+	*)	;;
+	esac
+fi
+if [ $PAYLOAD_ARCH == "" -a $NEWPAYLOAD_ARCH == "" ]; then
+	read  -p "Which Arch for payload? i686 or (default=x86_64)? " ans
+	if [ "$ans" == "" ]; then
+		NEWPAYLOAD_ARCH=x86_64
+	else
+		NEWPAYLOAD_ARCH=$ans
+	fi
+fi
 #=================================================================================
 # create a configuration file to pass to tiny core linux (centralize variables)
 #  To start a new install process from downloaded netinst, remove persist/tct/installer.conf
 
-if [ ! -f $PREFIX/persist/tce/installer.conf ]; then
+if [ $PAYLOAD !=$NEWPAYLOAD -o $PAYLOAD_ARCH != $NEWPAYLOAD_ARCH ]; then
 cat << EOF > $PREFIX/persist/tce/installer.conf
 #OS="centos"
 OS="fedora"
@@ -32,10 +78,8 @@ CORE_INITRD_X86=core
 CORE_KERNEL_X86=vmlinuz
 #CORE_KERNEL_X86=vmlinuz64
 CACHE=yes
-PAYLOAD="netinst"
-# absence of PAYLOAD definition prevents any download
-#PAYLOAD=
-PAYLOAD_ARCH="x86_64"
+PAYLOAD=$NEWPAYLOAD
+PAYLOAD_ARCH=$NEWPAYLOAD_ARCH
 
 # ARCH is the tinycore arch -- we'll do everything with i686
 ARCH="x86"
@@ -425,8 +469,11 @@ else
     mkdir -p /tmp/data/target/${FC_VER}/x86_64
 fi
 cp -p $PERSIST/target/loadOS /tmp/data/target
-cp -p $PERSIST/target/grub.cfg /tmp/data/target
-#cp -p $PERSIST/target/grub.cfg.i686 /tmp/data/target
+if [ $PAYLOAD_ARCH == "x86_64" ]; then
+   cp -p $PERSIST/target/grub.cfg /tmp/data/target
+else
+   cp -p $PERSIST/target/grub.cfg.i686 /tmp/data/target
+fi
 cp -p $PERSIST/target/grub.cfg.efi /tmp/data/target
 if [ ! -z ${PAYLOAD} ];then
   cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/

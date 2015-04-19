@@ -77,7 +77,7 @@ menuentry 'Fedora, with Linux @@VERSION@@.fc21.i686+PAE' --class fedora --class 
 	insmod ext2
 	set root='hd0,msdos2'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy  --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos2 --hint='hd0,msdos
+	  search --no-floppy  --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos2 --hint=hd0,msdos2
 	else
 	  search --no-floppy --label rootfs --set=root 
 	fi
