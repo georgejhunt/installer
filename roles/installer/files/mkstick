@@ -47,7 +47,7 @@ if [ -f $PREFIX/persist/tce/installer.conf ]; then
 	*)	;;
 	esac
 fi
-if [ $PAYLOAD_ARCH == "" -a $NEWPAYLOAD_ARCH == "" ]; then
+if [[ "$PAYLOAD_ARCH" == "" && $NEWPAYLOAD_ARCH == "" ]]; then
 	read  -p "Which Arch for payload? i686 or (default=x86_64)? " ans
 	if [ "$ans" == "" ]; then
 		NEWPAYLOAD_ARCH=x86_64
