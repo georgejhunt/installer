@@ -80,6 +80,7 @@ CORE_KERNEL_X86=vmlinuz
 CACHE=yes
 PAYLOAD=$NEWPAYLOAD
 PAYLOAD_ARCH=$NEWPAYLOAD_ARCH
+PAYLOAD_KERNEL=3.17.8-300
 
 # ARCH is the tinycore arch -- we'll do everything with i686
 ARCH="x86"
@@ -478,6 +479,7 @@ cp -p $PERSIST/target/grub.cfg.efi /tmp/data/target
 if [ ! -z ${PAYLOAD} ];then
   cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
 fi
+  echo "PAYLOAD_KERNEL=$PAYLOAD_KERNEL" > /tmp/data/tce/payload_kernel
 umount /tmp/data
 rmdir /tmp/data
 # vim: tabstop=4 expandtabs shiftwidth=4 softtabstop=4

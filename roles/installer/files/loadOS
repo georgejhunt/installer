@@ -154,8 +154,9 @@ else
 fi
 
 # fetch the actual kernal version number and update grub.cfg
-version=`cat ${SRCDIR}/../tce/grub.cfg.mbr | grep -e vmlinuz.*PAE | sed -e  's:^.*\(3\.[0-9]*\.[0-9]*\-[0-9]*\).*$:\1:'`
-sed -i -e "s:@@VERSION@@:$version:" /mnt/sda2/boot/grub/grub.cfg
+#version=`cat ${SRCDIR}/../tce/grub.cfg.mbr | grep -e vmlinuz.*PAE | sed -e  's:^.*\(3\.[0-9]*\.[0-9]*\-[0-9]*\).*$:\1:'`
+source /mnt/sdb2/tce/payload_kernel
+sed -i -e "s:@@VERSION@@:${PAYLOAD_KERNEL}:" /mnt/sda2/boot/grub/grub.cfg
 
 # following are attempting to set up EFI boot requirements
 #mkdir -p /mnt/sda1/EFI
