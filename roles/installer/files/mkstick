@@ -11,55 +11,53 @@
 PREFIX="/root/installer"
 mkdir -p $PREFIX/persist/tce
 NEWPAYLOAD_ARCH=
-PAYLOAD=netinst
+PAYLOAD=
+PAYLOAD_ARCH=
 
 # Let user decide whether to continue with last installer operation
 # Get the previous state
 if [ -f $PREFIX/persist/tce/installer.conf ]; then
 	source $PREFIX/persist/tce/installer.conf
-
-	echo
-	echo
-	read  -p  "The Payload from last operation was $PAYLOAD. Change y/N: " ans
-	echo "  --and the architecture was $PAYLOAD_ARCH"
-	case $ans in
-	y|Y)
-		read  -p "New value for payload (default=netinst)? " ans
-		if [ "$ans" == "" ]; then
-			NEWPAYLOAD=netinst
-		else
-			NEWPAYLOAD=$ans
-		fi
-		;;
-	*)	;;
-	esac
-
-	read  -p  "The arch from last operation was $PAYLOAD_ARCH. Change y/N: " ans
-	case $ans in
-	y|Y)
-		read  -p "New value for payload (default=x86_64)? " ans
-		if [ "$ans" == "" ]; then
-			NEWPAYLOAD_ARCH=x86_64
-		else
-			NEWPAYLOAD_ARCH=$ans
-		fi
-		;;
-	*)	;;
-	esac
 fi
-if [[ "$PAYLOAD_ARCH" == "" && $NEWPAYLOAD_ARCH == "" ]]; then
-	read  -p "Which Arch for payload? i686 or (default=x86_64)? " ans
+echo
+echo
+read  -p  "The Payload from last operation was $PAYLOAD. Change y/N: " ans
+echo "  --and the architecture was $PAYLOAD_ARCH"
+case $ans in
+y|Y)
+	read  -p "New value for payload (default=netinst)? " ans
+	if [ "$ans" == "" ]; then
+		NEWPAYLOAD=netinst
+	else
+		NEWPAYLOAD=$ans
+	fi
+	;;
+*)
+	NEWPAYLOAD=$PAYLOAD
+	;;
+esac
+
+read  -p  "The arch from last operation was $PAYLOAD_ARCH. Change y/N: " ans
+case $ans in
+y|Y)
+	read  -p "New value for payload (default=x86_64)? " ans
 	if [ "$ans" == "" ]; then
 		NEWPAYLOAD_ARCH=x86_64
 	else
 		NEWPAYLOAD_ARCH=$ans
 	fi
-fi
+	;;
+*)
+	NEWPAYLOAD_ARCH=$PAYLOAD_ARCH
+	;;
+esac
 #=================================================================================
 # create a configuration file to pass to tiny core linux (centralize variables)
 #  To start a new install process from downloaded netinst, remove persist/tct/installer.conf
 
-if [ $PAYLOAD !=$NEWPAYLOAD -o $PAYLOAD_ARCH != $NEWPAYLOAD_ARCH ]; then
+if [[ $PAYLOAD != $NEWPAYLOAD || \
+	$PAYLOAD_ARCH != $NEWPAYLOAD_ARCH || \
+        ! -f $PREFIX/persist/tce/installer.conf ]]; then
 cat << EOF > $PREFIX/persist/tce/installer.conf
 #OS="centos"
 OS="fedora"
@@ -80,7 +78,6 @@ CORE_KERNEL_X86=vmlinuz
 CACHE=yes
 PAYLOAD=$NEWPAYLOAD
 PAYLOAD_ARCH=$NEWPAYLOAD_ARCH
-PAYLOAD_KERNEL=3.17.8-300
 
 # ARCH is the tinycore arch -- we'll do everything with i686
 ARCH="x86"
@@ -479,7 +476,6 @@ cp -p $PERSIST/target/grub.cfg.efi /tmp/data/target
 if [ ! -z ${PAYLOAD} ];then
   cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
 fi
-  echo "PAYLOAD_KERNEL=$PAYLOAD_KERNEL" > /tmp/data/tce/payload_kernel
 umount /tmp/data
 rmdir /tmp/data
 # vim: tabstop=4 expandtabs shiftwidth=4 softtabstop=4
