@@ -149,8 +149,12 @@ EOF
 grub-install --boot-directory=/mnt/sda2/boot /dev/sda
 if [ "$PAYLOAD_ARCH" == "i686" ]; then
   cp ${SRCDIR}/grub.cfg.i686 /mnt/sda2/boot/grub/grub.cfg
-else
-  cp ${SRCDIR}/grub.cfg /mnt/sda2/boot/grub/grub.cfg
+fi
+if [ "$PAYLOAD_ARCH" == "x86_64" ]; then
+  cp ${SRCDIR}/grub.cfg.x86_64 /mnt/sda2/boot/grub/grub.cfg
+fi
+if [ "$PAYLOAD_ARCH" == "centos" ]; then
+  cp ${SRCDIR}/grub.cfg.centos /mnt/sda2/boot/grub/grub.cfg
 fi
 
 # fetch the actual kernal version number and update grub.cfg

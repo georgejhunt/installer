@@ -32,7 +32,7 @@
       - isolinux.cfg
       - grub.cfg.i686
       - grub.cfg.centos
-      - grub.cfg.target
+      - grub.cfg.x86_64
       - grub.cfg.target.efi
       - cachify
       - xsce-after-installer

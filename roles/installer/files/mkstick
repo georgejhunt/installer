@@ -367,12 +367,12 @@ fi
 cd $SCRIPTDIR
 cp loadOS $PERSIST/target
 if [ "$OS" == "centos" ];then
-  cp grub.cfg.centos $PERSIST/target/grub.cfg
+  cp grub.cfg.centos $PERSIST/target/grub.cfg.centos
 else
   if [ "$PAYLOAD_ARCH" == "x86_64" ];then
-    cp grub.cfg.target $PERSIST/target/grub.cfg
+    cp grub.cfg.x86_64 $PERSIST/target/grub.cfg.x86_64
   else
-    cp grub.cfg.i686 $PERSIST/target/grub.cfg
+    cp grub.cfg.i686 $PERSIST/target/grub.cfg.i686
   fi
 fi
 # We're assuming that efi is only x86_64 --grub.cfg.target implies x86_64
