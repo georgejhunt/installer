@@ -13,7 +13,7 @@ mkdir -p $PREFIX/persist/tce
 NEWPAYLOAD_ARCH=
 PAYLOAD=
 PAYLOAD_ARCH=
-USBSIZE=3800 # in MB for just the data partition 
+USBSIZE="3600" # in MB for just the data partition 
 
 # Let user decide whether to continue with last installer operation
 # Get the previous state
