@@ -34,7 +34,7 @@ else # check if this might be a netinst
    mount /dev/sda1 /mnt/sda1
    if [ $? -eq 0 ];then
 	if [ -f /mnt/sda1/usr ];then
-	    SOURCEMNT="mnt/sda1"
+	    SOURCEMNT="/mnt/sda1"
         else
    	    echo "Cannot find /usr on /mnt/sda1. Quitting"
 	    exit 1
@@ -70,7 +70,8 @@ echo "IMGNAME=$IMGNAME" >> /mnt/sdb2/tce/installer.conf
 echo "THISARCH=$THISARCH" >> /mnt/sdb2/tce/installer.conf
 
 # the presence of rh-ifcg files confuses starting on new hardware, delete
-rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
+# anything like this should be done in sysprep
+# rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
 
 cd ${SOURCEMNT}
 dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${IMGNAME}.tgz
@@ -83,7 +84,15 @@ if [ ! -z ${LIBRARYMNT} ];then
 	tar czf ${dest} *
 	md5sum ${dest} ${dest}.md5.txt 
 fi
+
+# get the grub files
 #
+find /boot | grep grub.cfg > /mnt/sdb2/tce/grublist
+for f in /mnt/sdb2/tce/grublist; do
+  mkdir -p /mnt/sdb2/tce$f
+  cp $f /mnt/sdb2/tce$f
+done
+
 # get the md5 of mydata
 #	
 md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
