@@ -2,15 +2,17 @@
 # this script runs on Tiny Core after target machine is set up, captures it
 
 # Using the USB as shuttle, bring the target machine onto the USB stick
-# The tinycore  mydaya.tgz is already here
 
 # the following config file communicates between desktop and tiny core
 source /mnt/sdb2/tce/installer.conf
 
 # are we fetching a netinst, or a configured XSCE
+#   hopefully, netinst will never create 3 partitions
+umount /dev/sda3
 mount /dev/sda3 /mnt/sda3
 if [ $? -eq 0 ]; then
    if [ -d /mnt/sda3/cache ]; then 
+      umount /dev/sda2
       mount "/dev/sda2" "/mnt/sda2"
       if [ ! $? -eq 0 ];then
 	 echo "unable to mount /dev/sda2. quitting"
@@ -30,24 +32,34 @@ if [ $? -eq 0 ]; then
       echo
       exit 1
   fi
-else # check if this might be a netinst
+else # could not mout sda3, check if this might be a netinst
+   # reminder: netinst when using EFI requires first partition to be EFI
    mount /dev/sda1 /mnt/sda1
    if [ $? -eq 0 ];then
-	if [ -f /mnt/sda1/usr ];then
+	if [ -d /mnt/sda1/usr ];then
 	    SOURCEMNT="/mnt/sda1"
-        else
-   	    echo "Cannot find /usr on /mnt/sda1. Quitting"
-	    exit 1
+	    LIBRARYMNT=""
         fi
    fi
+   mount /dev/sda2 /mnt/sda2
+   if [ $? -eq 0 ];then
+	if [ -d /mnt/sda2/usr ];then
+	    SOURCEMNT="/mnt/sda2"
+            mount /dev/sda1 /mnt/sda2/boot/efi
+        fi
+   fi
+fi
+if [ -z $SOURCEMNT ]; then
+   echo "No /usr directory found"
+   exit 1
 fi
 
 
 echo
 echo "================================================================="
 echo 
-read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " THISARCH
-case $THISARCH in
+read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " PAYLOAD_ARCH
+case $PAYLOAD_ARCH in
 "i686"|"x86_64")
    ;;
 *)
@@ -56,32 +68,47 @@ case $THISARCH in
   ;;
 esac
 
-IMGNAME="netinst"
-gitcommit=`grep xsce_commit /mnt/sda2/etc/xsce/xsce.ini|cut -d" " -f3`
+PAYLOAD="netinst"
+gitcommit=`grep xsce_commit ${SOURCEMNT}/etc/xsce/xsce.ini|cut -d" " -f3`
 echo "the git commit is $gitcommit"
-read -p "What should I call this root File System Image? Default=$IMGNAME: " ans
+read -p "What should I call this root File System Image? Default=$PAYLOAD: " ans
 if [ ! -z $ans ];then
-   IMGNAME=$ans
+   PAYLOAD=$ans
 fi
 # the following leaves a pointer to the configured tgz image to be incorporated
 #   into the USB stick, created by this script
-mkdir -p /mnt/sdb2/tce/$THISARCH/
-echo "IMGNAME=$IMGNAME" >> /mnt/sdb2/tce/installer.conf
-echo "THISARCH=$THISARCH" >> /mnt/sdb2/tce/installer.conf
+mkdir -p /mnt/sdb2/target/${FC_VER}//$PAYLOAD_ARCH/
+echo "PAYLOAD=$PAYLOAD" >> /mnt/sdb2/tce/installer.conf
+echo "PAYLOAD_ARCH=$PAYLOAD_ARCH" >> /mnt/sdb2/tce/installer.conf
 
 # the presence of rh-ifcg files confuses starting on new hardware, delete
 # anything like this should be done in sysprep
 # rm -f ${SOURCEMNT}/etc/sysconfig/network-scripts/ifcfg-e*  #not lo
 
+# make a list that includes all root level directories, except for library
 cd ${SOURCEMNT}
-dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${IMGNAME}.tgz
-tar czf ${dest} *
+list=
+for d in `ls -d1 *`; do
+  if [ "$d" == "library" ]; then
+    continue
+  fi
+  list="$list $d"
+done
+
+# now do the taring
+dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
+
+if [  "$TARLIB" == "true" ];then
+    tar -czf ${dest} ${list}
+else
+    tar -czf ${dest} *
+fi
 md5sum ${dest} ${dest}.md5.txt 
  
-if [ ! -z ${LIBRARYMNT} ];then
+if [ ! -z ${LIBRARYMNT} -a "$TARLIB" == "true" ];then
 	cd ${LIBRARYMNT} 
-        dest=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}_${IMGNAME}-library.tgz
-	tar czf ${dest} *
+        dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}-library.tgz
+	tar -czf ${dest} *
 	md5sum ${dest} ${dest}.md5.txt 
 fi
 
@@ -96,6 +123,15 @@ done
 # get the md5 of mydata
 #	
 md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
-ls -l /mnt/sdb2/target/${FC_VER}/${THISARCH}
+cp ${SOURCEMNT}/root/anaconda-ks.cfg /mnt/sdb2/tce/
+cp ${SOURCEMNT}/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/grub.cfg.efi
+cp ${SOURCEMNT}/boot/grub/grub.cfg /mnt/sdb2/tce/grub.cfg.mbr
+cp ${SOURCEMNT}/boot/grub2/grub.cfg /mnt/sdb2/tce/grub.cfg.mbr
+
+# fetch the actual kernal version number and update grub.cfg
+version=`cat ${SOURCEMNT}/boot/grub/grub.cfg | grep -e vmlinuz.*PAE | sed -e  's:^.*\(3\.[0-9]*\.[0-9]*\-[0-9]*\).*$:\1:'`
+echo "PAYLOAD_KERNEL=$version" > /mnt/sdb2/tce/payload_kernel
+
+ls -l /mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}
 tree /mnt/sdb2/target
 

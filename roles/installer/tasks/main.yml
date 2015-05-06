@@ -30,7 +30,9 @@
       - loadOS
       - mkstick
       - isolinux.cfg
-      - grub.cfg.target
+      - grub.cfg.i686
+      - grub.cfg.centos
+      - grub.cfg.x86_64
       - grub.cfg.target.efi
       - cachify
       - xsce-after-installer
@@ -40,6 +42,13 @@
 - name: Put a systemd unit file to start a bash script on first boot after install
   template: src=finish-install.service.j2
             dest="{{ xsce_dir }}/scripts/installer/finish-install.service"
+            owner=root
+            group=root
+            mode=0755
+
+- name: Put a systemd unit file into systemd location on this machine
+  template: src=finish-install.service.j2
+            dest="/etc/systemd/system/finish-install.service"
             owner=root
             group=root
             mode=0755

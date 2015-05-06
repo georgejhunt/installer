@@ -1,18 +1,66 @@
 #!/bin/bash -x
 
-# first part makes iso image from tiny core, second part sets up data for XSCE target
-#   Last part creates the image which gets copied onto USB stick
+# first part makes iso image from tiny core,c
+# second part sets up data for XSCE target
+# Last part creates the image which gets copied onto USB stick
+
 # somewhat based on James Cameron's mktinycorxo at
 # http://dev.laptop.org/git/users/quozl/mktinycorexo
 # Stick required is at least 2G USB
 
-# create a configuration file to pass to tiny core linux (centralize variables)
-#PREFIX="/root/installer"
 PREFIX="/root/installer"
 mkdir -p $PREFIX/persist/tce
+NEWPAYLOAD_ARCH=
+PAYLOAD=
+PAYLOAD_ARCH=
 
-if [ ! -f $PREFIX/persist/tce/installer.conf ]; then
+# Let user decide whether to continue with last installer operation
+# Get the previous state
+if [ -f $PREFIX/persist/tce/installer.conf ]; then
+	source $PREFIX/persist/tce/installer.conf
+fi
+echo
+echo
+read  -p  "The Payload from last operation was $PAYLOAD. Change y/N: " ans
+echo "  --and the architecture was $PAYLOAD_ARCH"
+case $ans in
+y|Y)
+	read  -p "New value for payload (default=netinst)? " ans
+	if [ "$ans" == "" ]; then
+		NEWPAYLOAD=netinst
+	else
+		NEWPAYLOAD=$ans
+	fi
+	;;
+*)
+	NEWPAYLOAD=$PAYLOAD
+	;;
+esac
+
+read  -p  "The arch from last operation was $PAYLOAD_ARCH. Change y/N: " ans
+case $ans in
+y|Y)
+	read  -p "New value for payload (default=x86_64)? " ans
+	if [ "$ans" == "" ]; then
+		NEWPAYLOAD_ARCH=x86_64
+	else
+		NEWPAYLOAD_ARCH=$ans
+	fi
+	;;
+*)
+	NEWPAYLOAD_ARCH=$PAYLOAD_ARCH
+	;;
+esac
+#=================================================================================
+# create a configuration file to pass to tiny core linux (centralize variables)
+#  To start a new install process from downloaded netinst, remove persist/tct/installer.conf
+
+if [[ $PAYLOAD != $NEWPAYLOAD || \
+	$PAYLOAD_ARCH != $NEWPAYLOAD_ARCH || \
+        ! -f $PREFIX/persist/tce/installer.conf ]]; then
 cat << EOF > $PREFIX/persist/tce/installer.conf
+#OS="centos"
+OS="fedora"
 FC_VER="21"
 FC_URL="http://mirrors.usc.edu/pub/linux/distributions/fedora/linux/releases/${FC_VER}/Fedora/${FC_ARCH}/os/images/"
 UK_URL="http://download.unleashkids.org/xsce/downloads/installer/"
@@ -27,20 +75,18 @@ CORE_INITRD_X86=core
 #CORE_INITRD_X86=corepure64
 CORE_KERNEL_X86=vmlinuz
 #CORE_KERNEL_X86=vmlinuz64
-CACHE=no
-PAYLOAD="netinst"
-#PAYLOAD="runansible"
-PAYLOAD_ARCH="x86_64"
+CACHE=yes
+PAYLOAD=$NEWPAYLOAD
+PAYLOAD_ARCH=$NEWPAYLOAD_ARCH
+
 # ARCH is the tinycore arch -- we'll do everything with i686
 ARCH="x86"
-# the existance of IMGNAME in this file disables fetch of rootfs from UK_URL
-IMGNAME=""
+TARLIB="true"	
 EOF
+
 chmod 755 $PREFIX/persist/tce/installer.conf
 fi
 
-# if this stick is used as shuttle from TC linux, it may have variables
-#   that are coming back (image name, tar files, etc)
 source $PREFIX/persist/tce/installer.conf
 
 CURDIR=`pwd`
@@ -78,19 +124,6 @@ if [ -z $REMOVABLE_DRIVES ];then
     exit 1
 fi
 dev="/dev/$REMOVABLE_DRIVES"
-
-# see if this is a second time using this USB stick
-mkdir -p /mnt/sdb2
-
-# try to mount it, and check for the installer.conf file
-mount ${dev}2 /mnt/sdb2
-if [ $? -eq 0 ]; then
-    if [ -f /mnt/sdb2/tce/installer.conf ]; then
-       source /mnt/sdb2/tce/installer.conf
-       # overwrite the variables sourced above, and add in new ones
-    fi
-    umount /mnt/sdb2
-fi
 
 # build the cache
 mkdir -p $ISO/boot/isolinux
@@ -322,46 +355,32 @@ function get_rootfs {
 
 exec  > tee -a $LOGFILE
 
-# if there is a fetched image, use it
-if [ ! -z "$IMGNAME" ];then # preserve it in our cache for future use
-        path=$PERSIST/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}
-        src=/mnt/sdb2/target/${FC_VER}/${THISARCH}/${THISARCH}fc${FC_VER}${IMGNAME}.tgz
-	if [ ! -f ${path} ]; then
-		cp $src ${path}.tgz
-	else
-	    if [ $CACHE = no ]; then
-	        if [ "$(cat ${path}.md5.txt | cut -f 1 -d ' ')" \
-		   != "$(md5sum ${path}.tgz | cut -f 1 -d ' ')" ]; then
-		    cp $src ${path}.tgz
-	        fi
-	    fi
-	fi	
-else # download an image from XSCE repository
+if [ "$PAYLOAD" == "netinst" ];then  # download an image from XSCE repository
     if [ "$PAYLOAD_ARCH" == "i686" ]; then
-	get_rootfs i686 i686fc${FC_VER}${PAYLOAD}.tgz
+	get_rootfs i686 i686fc${FC_VER}_${PAYLOAD}.tgz
     else
-	get_rootfs x86_64 x86_64fc${FC_VER}${PAYLOAD}.tgz
+	get_rootfs x86_64 x86_64fc${FC_VER}_${PAYLOAD}.tgz
     fi
 fi
 
 # and the generic config files
 cd $SCRIPTDIR
 cp loadOS $PERSIST/target
-cp grub.cfg.target $PERSIST/target/grub.cfg
+if [ "$OS" == "centos" ];then
+  cp grub.cfg.centos $PERSIST/target/grub.cfg.centos
+else
+  if [ "$PAYLOAD_ARCH" == "x86_64" ];then
+    cp grub.cfg.x86_64 $PERSIST/target/grub.cfg.x86_64
+  else
+    cp grub.cfg.i686 $PERSIST/target/grub.cfg.i686
+  fi
+fi
+# We're assuming that efi is only x86_64 --grub.cfg.target implies x86_64
 cp grub.cfg.target.efi $PERSIST/target/grub.cfg.efi
 cp finish-install.service /$PERSIST/tce/shuttle
 cp xsce-after-installer /$PERSIST/tce/shuttle
 cp sysprep /$PERSIST/tce/shuttle
 
-# if there is a fetched image, we don't really want to destroy anything
-if [ ! -z "$IMGNAME" ];then 
-	echo 
-	echo "==============================================================="
-	echo " This stick contains a configured rootFS image"
-	echo " If you really want to overwrite its contents, delete the 'tce' "
-	echo " directory at the USB root"
-	exit 0
-fi
 #=================================================================================
 # The following stuff is necessary to create the USB stick
 
@@ -380,10 +399,10 @@ mkisofs -o ../${STICKNAME}.iso -b boot/isolinux/isolinux.bin -c boot/isolinux/bo
 # the following puts the mbr loader in place
 isohybrid ../$STICKNAME.iso --partok
 
+#=================================================================================
 read -t 10 -p "\n\nI'm about to write $dev OK [Y/n]:" ans
 case $ans in
 "y"|"Y")
-    break
     ;;
 *)
     if [ ! -z $ans ];then
@@ -414,7 +433,7 @@ n
 p
 
 
-+3000M
++1600M
 a
 1
 t
@@ -448,13 +467,15 @@ else
     mkdir -p /tmp/data/target/${FC_VER}/x86_64
 fi
 cp -p $PERSIST/target/loadOS /tmp/data/target
-cp -p $PERSIST/target/grub.cfg /tmp/data/target
+if [ $PAYLOAD_ARCH == "x86_64" ]; then
+   cp -p $PERSIST/target/grub.cfg /tmp/data/target
+else
+   cp -p $PERSIST/target/grub.cfg.i686 /tmp/data/target
+fi
 cp -p $PERSIST/target/grub.cfg.efi /tmp/data/target
-cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
-
-if [ ! "$PAYLOAD" == "netinst" ];then
-    cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}${PAYLOAD}-library.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
+if [ ! -z ${PAYLOAD} ];then
+  cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
 fi
 umount /tmp/data
 rmdir /tmp/data
-# vim: tabstop=8 expandtabs shiftwidth=4 softtabstop=4
+# vim: tabstop=4 expandtabs shiftwidth=4 softtabstop=4

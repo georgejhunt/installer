@@ -2,7 +2,7 @@
 # routine to shrink the hard disk and create a compressed image
 # at this point, assume partition is /dev/sda3
 
-partition=sda1
+partition=sdb3
 partno=`echo $partition|sed -e's/[a-z]*\([0-9]\)/\1/'`
 blkdev=`echo $partition|sed -e's/\([a-z]*\)[0-9]/\1/'`
 mount "/dev/$partition" /mnt
@@ -14,7 +14,8 @@ fsck -n "/dev/$partition"
 tune2fs -O ^has_journal "/dev/$partition"
 e2fsck -f "/dev/$partition"
 read  "hit any key to continue"
-#resize2fs "/dev/$partition"  "$blocks"
+resize2fs -M "/dev/$partition"  
+e2fsck -f "/dev/$partition"
 newsize=`fsck -a "/dev/$partition" | gawk '/rootfs/ {print $5}' | sed -e 's/.*\/\([0-9]*\)/\1/'`
 tune2fs -j "/dev/$partition"
 unitsize=`fdisk -l "/dev/$blkdev"|grep Units | gawk '{print $9}'`

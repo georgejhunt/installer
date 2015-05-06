@@ -40,7 +40,7 @@ cd ${PREFIX}
 
 
 # go grab the data
-nibble=${FC_VER}/${THISARCH}/${THISARCH}fc${THIS_VER}_${IMAGENAME}
+nibble=${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}
 source=/usb/target/${nibble}
 if [ -f ${source}.tgz ];then
    rsync ${source}.tgz $PREFIX/persist/target/${nibble}.tgz
@@ -49,13 +49,18 @@ if [ -f ${source}-library.tgz ];then
    rsync ${source}-library.tgz $PREFIX/persist/target/${nibble}-library.tgz
 fi
 rsync -rp /usb/tce/mydata.tgz ${PREFIX}/persist/tce/mydata.tgz
+rsync -p /usb/tce/installer.conf ${PREFIX}/persist/tce/installer.conf
 umount /usb
 rmdir /usb
 
 read -p "Hit <ctl>c to abort copying to unleash_kids"
+cd ${PREFIX}/persist
 rsync  tce/mydata.tgz george@unleashkids.org:/home/george
 md5sum tce/mydata.tgz > tce/mydata.tgz.md5.txt
 rsync  tce/mydata.tgz.md5.txt george@unleashkids.org:/home/george
+exit 0
+
+
 if [ -d tce/i686 ];then
    rsync tce/i686 george@unleashkids.org:/home/george
 fi

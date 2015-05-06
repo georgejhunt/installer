@@ -69,42 +69,53 @@ fi
 ### END /etc/grub.d/00_header ###
 
 ### BEGIN /etc/grub.d/10_linux ###
-menuentry 'Fedora, with Linux 3.18.7-200.fc21.x86_64' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.18.7-200.fc21.x86_64-advanced-ba5bac6c-8e7f-4629-9c27-bd2ecbce5813' {
+menuentry 'CentOS Linux (3.10.0-123.20.1.el7.x86_64) 7 (Core)' --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-123.el7.x86_64-advanced-66600fc5-5422-4881-b770-d42350c25fd4' {
 	load_video
 	set gfxpayload=keep
 	insmod gzio
-	insmod part_gpt
 	insmod part_msdos
 	insmod ext2
-	set root='hd0,msdos2'
+	set root='hd0,msdos1'
 	if [ x$feature_platform_search_hint = xy ]; then
 	  search --no-floppy --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos  
 	else
 	  search --no-floppy --label rootfs --set=root 
 	fi
-	linuxefi /boot/vmlinuz-3.18.7-200.fc21.x86_64 root=LABEL=rootfs ro rhgb quiet LANG=en_US.UTF-8
-	initrdefi /boot/initramfs-3.18.7-200.fc21.x86_64.img
+	linux16 /boot/vmlinuz-3.10.0-123.20.1.el7.x86_64 root=LABEL=rootfs  ro vconsole.keymap=us crashkernel=auto  vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_US.UTF-8 intel_pstate=disable
+	initrd16 /boot/initramfs-3.10.0-123.20.1.el7.x86_64.img
 }
-menuentry 'Fedora, with Linux 0-rescue-0fdf49f354474290aa4edb9d7a5270a8' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-0fdf49f354474290aa4edb9d7a5270a8-advanced-ba5bac6c-8e7f-4629-9c27-bd2ecbce5813' {
+menuentry 'CentOS Linux, with Linux 3.10.0-123.el7.x86_64' --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-123.el7.x86_64-advanced-66600fc5-5422-4881-b770-d42350c25fd4' {
 	load_video
+	set gfxpayload=keep
 	insmod gzio
-	insmod part_gpt
 	insmod part_msdos
 	insmod ext2
-	set root='hd0,msdos2'
+	set root='hd0,msdos1'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdow2 --hint-baremetal=ahci0,msdos2 
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1 --hint='hd0,msdos1'  66600fc5-5422-4881-b770-d42350c25fd4
 	else
-	  search --no-floppy --label rootfs --set=root 
+	  search --no-floppy --fs-uuid --set=root 66600fc5-5422-4881-b770-d42350c25fd4
 	fi
-	linux /boot/vmlinuz-0-rescue-0fdf49f354474290aa4edb9d7a5270a8 root=LABEL=rootfs ro rhgb quiet
-	initrd /boot/initramfs-0-rescue-0fdf49f354474290aa4edb9d7a5270a8.img
+	linux16 /boot/vmlinuz-3.10.0-123.el7.x86_64 root=LABEL=rootfs ro vconsole.keymap=us crashkernel=auto  vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_US.UTF-8 intel_pstate=disable
+	initrd16 /boot/initramfs-3.10.0-123.el7.x86_64.img
 }
-
+menuentry 'CentOS Linux, with Linux 0-rescue-1de568d13f304043b87a35cf7a828d56' --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-1de568d13f304043b87a35cf7a828d56-advanced-66600fc5-5422-4881-b770-d42350c25fd4' {
+	load_video
+	insmod gzio
+	insmod part_msdos
+	insmod ext2
+	set root='hd0,msdos1'
+	if [ x$feature_platform_search_hint = xy ]; then
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1 --hint='hd0,msdos1'  66600fc5-5422-4881-b770-d42350c25fd4
+	else
+	  search --no-floppy --label rootfs --set=root 	
+	linux16 /boot/vmlinuz-0-rescue-1de568d13f304043b87a35cf7a828d56 root=LABEL=rootfs ro vconsole.keymap=us crashkernel=auto  vconsole.font=latarcyrheb-sun16 rhgb quiet intel-pstate=disable
+	initrd16 /boot/initramfs-0-rescue-1de568d13f304043b87a35cf7a828d56.img
+}
+if [ "x$default" = 'CentOS Linux, with Linux 3.10.0-123.el7.x86_64' ]; then default='Advanced options for CentOS Linux>CentOS Linux, with Linux 3.10.0-123.el7.x86_64'; fi;
 ### END /etc/grub.d/10_linux ###
 
 ### BEGIN /etc/grub.d/20_linux_xen ###
-
 ### END /etc/grub.d/20_linux_xen ###
 
 ### BEGIN /etc/grub.d/20_ppc_terminfo ###

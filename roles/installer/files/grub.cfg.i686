@@ -69,38 +69,21 @@ fi
 ### END /etc/grub.d/00_header ###
 
 ### BEGIN /etc/grub.d/10_linux ###
-menuentry 'Fedora, with Linux 3.18.7-200.fc21.x86_64' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.18.7-200.fc21.x86_64-advanced-ba5bac6c-8e7f-4629-9c27-bd2ecbce5813' {
+menuentry 'Fedora, with Linux @@VERSION@@.fc21.i686+PAE' --class fedora --class gnu-linux {
 	load_video
 	set gfxpayload=keep
 	insmod gzio
-	insmod part_gpt
 	insmod part_msdos
 	insmod ext2
 	set root='hd0,msdos2'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos  
+	  search --no-floppy  --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2 --hint-baremetal=ahci0,msdos2 --hint=hd0,msdos2
 	else
 	  search --no-floppy --label rootfs --set=root 
 	fi
-	linuxefi /boot/vmlinuz-3.18.7-200.fc21.x86_64 root=LABEL=rootfs ro rhgb quiet LANG=en_US.UTF-8
-	initrdefi /boot/initramfs-3.18.7-200.fc21.x86_64.img
+	linux16 /boot/vmlinuz-@@VERSION@@.fc21.i686+PAE root=LABEL=rootfs ro rhgb quiet selinux=0
+	initrd16 /boot/initramfs-@@VERSION@@.fc21.i686+PAE.img
 }
-menuentry 'Fedora, with Linux 0-rescue-0fdf49f354474290aa4edb9d7a5270a8' --class fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-0-rescue-0fdf49f354474290aa4edb9d7a5270a8-advanced-ba5bac6c-8e7f-4629-9c27-bd2ecbce5813' {
-	load_video
-	insmod gzio
-	insmod part_gpt
-	insmod part_msdos
-	insmod ext2
-	set root='hd0,msdos2'
-	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdow2 --hint-baremetal=ahci0,msdos2 
-	else
-	  search --no-floppy --label rootfs --set=root 
-	fi
-	linux /boot/vmlinuz-0-rescue-0fdf49f354474290aa4edb9d7a5270a8 root=LABEL=rootfs ro rhgb quiet
-	initrd /boot/initramfs-0-rescue-0fdf49f354474290aa4edb9d7a5270a8.img
-}
-
 ### END /etc/grub.d/10_linux ###
 
 ### BEGIN /etc/grub.d/20_linux_xen ###
