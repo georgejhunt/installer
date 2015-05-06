@@ -443,6 +443,7 @@ b
 w
 EOF
 
+sleep 5
 partprobe $dev
 
 # put the iso into the small partition
