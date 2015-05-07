@@ -367,15 +367,7 @@ fi
 # and the generic config files
 cd $SCRIPTDIR
 cp loadOS $PERSIST/target
-if [ "$OS" == "centos" ];then
-  cp grub.cfg.centos $PERSIST/target/grub.cfg.centos
-else
-  if [ "$PAYLOAD_ARCH" == "x86_64" ];then
-    cp grub.cfg.x86_64 $PERSIST/target/grub.cfg.x86_64
-  else
-    cp grub.cfg.i686 $PERSIST/target/grub.cfg.i686
-  fi
-fi
+cp grub.cfg* $PERSIST/target/
 # We're assuming that efi is only x86_64 --grub.cfg.target implies x86_64
 cp grub.cfg.target.efi $PERSIST/target/grub.cfg.efi
 cp finish-install.service /$PERSIST/tce/shuttle
@@ -469,12 +461,8 @@ else
     mkdir -p /tmp/data/target/${FC_VER}/x86_64
 fi
 cp -p $PERSIST/target/loadOS /tmp/data/target
-if [ $PAYLOAD_ARCH == "x86_64" ]; then
-   cp -p $PERSIST/target/grub.cfg /tmp/data/target
-else
-   cp -p $PERSIST/target/grub.cfg.i686 /tmp/data/target
-fi
-cp -p $PERSIST/target/grub.cfg.efi /tmp/data/target
+cp -p $PERSIST/target/grub.cfg* /tmp/data/target
+
 if [ ! -z ${PAYLOAD} ];then
   cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
 fi

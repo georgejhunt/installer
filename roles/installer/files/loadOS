@@ -147,13 +147,13 @@ EOF
 # now install the grub mbr loader, and the grub EFI loader
 # following set up the mbr boot requirements
 grub-install --boot-directory=/mnt/sda2/boot /dev/sda
-if [ "$PAYLOAD_ARCH" == "i686" ]; then
+if [ "$PAYLOAD_ARCH" == "i686" -a "$OS" == "fedora"]; then
   cp ${SRCDIR}/grub.cfg.i686 /mnt/sda2/boot/grub/grub.cfg
 fi
-if [ "$PAYLOAD_ARCH" == "x86_64" ]; then
+if [ "$PAYLOAD_ARCH" == "x86_64" -a "$OS" == "fedora" ]; then
   cp ${SRCDIR}/grub.cfg.x86_64 /mnt/sda2/boot/grub/grub.cfg
 fi
-if [ "$PAYLOAD_ARCH" == "centos" ]; then
+if [ "$OS" == "centos" ]; then
   cp ${SRCDIR}/grub.cfg.centos /mnt/sda2/boot/grub/grub.cfg
 fi
 

@@ -2,11 +2,11 @@
 # run this script to prepare for generating the install image
 
 # remove all the network ifcfg files except lo
-find /etc/sysconfig/network-scripts -name "ifcfg-*" -not -path "./ifcfg-lo" | xargs rm -rf 
+find /etc/sysconfig/network-scripts -name "ifcfg-*" |grep -v -e ifcfg-lo | xargs rm -rf 
 
 # remove uuid and ini files 
 rm -f /etc/xsce/uuid
-rm -f /etc/xsce/xsce.ini
+rm -f /etc/xsce/xsce.ini*
 
 # remove any ssh keys
 rm -rf /root/.ssh/*
