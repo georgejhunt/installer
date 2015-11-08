@@ -20,6 +20,7 @@ if [ $? -eq 0 ]; then
       fi
       SOURCEMNT="/mnt/sda2"
       LIBRARYMNT="/mnt/sda3"
+      mount /dev/sda3 /mnt/sda2/library
    else
       echo "cannot find /cache on partition 3. Quitting"
       exit 1
