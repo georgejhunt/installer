@@ -446,6 +446,7 @@ dd if=$STICKNAME.iso of="${dev}1" bs=4M
 cd $SCRIPTDIR
 dd if=/usr/share/syslinux/mbr.bin of=${dev} bs=440 count=1
 
+umount ${dev}2
 # and format the data partition
 mke2fs -t ext2 -L data "${dev}2"
 
