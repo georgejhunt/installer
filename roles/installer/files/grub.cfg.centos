@@ -73,7 +73,7 @@ set tuned_params=""
 ### END /etc/grub.d/00_tuned ###
 
 ### BEGIN /etc/grub.d/10_linux ###
-menuentry 'CentOS Linux (3.10.0-229.1.2.el7.x86_64) 7 (Core)' --class rhel fedora --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-229.el7.x86_64-advanced-f051a387-7b0a-4a65-81d8-02899852f586' {
+menuentry "@@version@@" --class rhel fedora --class gnu-linux --class gnu --class os --unrestricted {
 	load_video
 	set gfxpayload=keep
 	insmod gzio
@@ -81,8 +81,8 @@ menuentry 'CentOS Linux (3.10.0-229.1.2.el7.x86_64) 7 (Core)' --class rhel fedor
 	insmod ext2
 	set root='hd0,msdos2'
 	search --no-floppy --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2
-	linux16 /boot/vmlinuz-3.10.0-229.1.2.el7.x86_64 root=LABEL=rootfs ro crashkernel=auto rhgb quiet LANG=en_US.UTF-8 systemd.debug
-	initrd16 /boot/initramfs-3.10.0-229.1.2.el7.x86_64.img
+	linux16 @@version@@ root=LABEL=rootfs ro crashkernel=auto rhgb quiet LANG=en_US.UTF-8 systemd.debug selinux=0
+	initrd16 @@version@@.img
 }
 
 ### END /etc/grub.d/10_linux ###
