@@ -155,7 +155,7 @@ if [ "$PAYLOAD_ARCH" == "x86_64" -a "$OS" == "fedora" ]; then
 fi
 if [ "$OS" == "centos" ]; then
   cp ${SRCDIR}/grub.cfg.centos /mnt/sda2/boot/grub/grub.cfg
-  sed -i -e "s/$KERNEL_VERSION/@@VERSION@@/" /mnt/sda2/boot/grub/grub.cfg
+  sed -i -e "s/@@VERSION@@/$KERNEL_VERSION/" /mnt/sda2/boot/grub/grub.cfg
 fi
 
 # following are attempting to set up EFI boot requirements
