@@ -156,6 +156,7 @@ fi
 if [ "$OS" == "centos" ]; then
   cp ${SRCDIR}/grub.cfg.centos /mnt/sda2/boot/grub/grub.cfg
   sed -i -e "s/@@version@@/$KERNEL_VERSION/" /mnt/sda2/boot/grub/grub.cfg
+  sed -i -e "s/@@initramfs@@/${KERNEL_VERSIONf##vmlinuz-}/" /mnt/sda2/boot/grub/grub.cfg
 fi
 
 # following are attempting to set up EFI boot requirements

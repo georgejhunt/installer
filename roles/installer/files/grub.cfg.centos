@@ -81,8 +81,8 @@ menuentry "@@version@@" --class rhel fedora --class gnu-linux --class gnu --clas
 	insmod ext2
 	set root='hd0,msdos2'
 	search --no-floppy --label rootfs --set=root --hint-bios=hd0,msdos2 --hint-efi=hd0,msdos2
-	linux16 @@version@@ root=LABEL=rootfs ro crashkernel=auto rhgb quiet LANG=en_US.UTF-8 systemd.debug selinux=0
-	initrd16 @@version@@.img
+	linux16 /boot/@@version@@ root=LABEL=rootfs ro crashkernel=auto rhgb quiet LANG=en_US.UTF-8 systemd.debug selinux=0
+	initrd16 /boot/@@initramfs@@.img
 }
 
 ### END /etc/grub.d/10_linux ###
