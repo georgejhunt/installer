@@ -149,7 +149,7 @@ if [ "$PAYLOAD_ARCH" == "x86_64" -a "$OS" == "fedora" ]; then
   cp ${SRCDIR}/grub.cfg.x86_64 /mnt/$rootfs/boot/grub/grub.cfg
 fi
 
-function hide(){
+function hide() {
 # following are attempting to set up EFI boot requirements
 #mkdir -p /mnt/sda1/EFI
 mkdir /home/tc/img
@@ -167,8 +167,6 @@ initrd=`find /mnt/$rootfs/boot | grep initramfs-3 | head -n 1`
 ln -sf $(basename $initrd) /mnt/$rootfs/boot/initramfs
 }
 
-# put a folder on the library partition, so that later we can look for it
-mkdir -p /mnt/sda3/cache
 # the shuttle is where to put any scripts to make deployment wide changes
 mkdir -p /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer
 cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer/
