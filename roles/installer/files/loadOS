@@ -1,5 +1,8 @@
 #!/bin/sh -x
 # tinycore script to partition, and load the OS for XSCE
+#
+# change log ======================================
+# 160218 give up on EFI, dispense with FAT partition, so now just root, and library
 
 # first look for command line flags 
 TARGET_LOADER="MBR"
@@ -9,6 +12,7 @@ i686=`grep -w i686 /proc/cmdline`
 x86_64=`grep -w x86_64 /proc/cmdline`
 PAYLOAD='netinst' # default for the initial install
 PAYLOAD_ARCH="x86_64"
+rootfs="sda1"
 
 # get the variables that are being passed back and forth
 #  in particular, PAYLOAD is the name of the tgz image
@@ -50,16 +54,11 @@ d
 n
 p
 1
-1
-+500M
-n
-p
-2
 
 +50G
 n
 p
-3
+2
 
 
 a
@@ -104,86 +103,78 @@ fi
 partprobe /dev/sda
 until [ -e /dev/sda1 ]; do sleep .25; done
 
-mkdosfs -F 32 -n boot /dev/sda1
-mkfs.ext4 -L rootfs /dev/sda2
-mkfs.ext4 -L library /dev/sda3
+mkfs.ext4 -L rootfs /dev/$rootfs
+mkfs.ext4 -L library /dev/sda2
 
 #mount /dev/sda1 /mnt/sda1
-mount /dev/sda2 /mnt/sda2
+mount /dev/$rootfs /mnt/$rootfs
 #mount /dev/sda3 /mnt/sda3
 
 #create mount points for the partitions
-mkdir -p /mnt/sda2/boot/efi
-mkdir -p /mnt/sda2/library
+mkdir -p /mnt/$rootfs/library
 # mount them
-mount /dev/sda1 /mnt/sda2/boot/efi
-mount /dev/sda3 /mnt/sda2/library
+mount /dev/sda2 /mnt/$rootfs/library
 
 sleep 1
 # I'm hoping that this operation will wait until the mount is completed
-cd /mnt/sda2/library
+cd /mnt/$rootfs/library
 mkdir -p cache
 
 # put the root file system in place
-cd /mnt/sda2/
-until [ -d /mnt/sda2/library/cache ]; do sleep .25; done
+cd /mnt/$rootfs/
+until [ -d /mnt/$rootfs/library/cache ]; do sleep .25; done
 tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
 
 # need to put the library contents in place via a separate tar file
 if [ "$PAYLOAD" != "netinst" -a "$TARLIB" == "true" ];then
-  cd /mnt/sda2/library
+  cd /mnt/$rootfs/library
   tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}-library.tgz
 fi
 
 cd $curdir 
 
 # create a fstab
-cat << EOF > /mnt/sda2/etc/fstab
+cat << EOF > /mnt/$rootfs/etc/fstab
 LABEL=rootfs	/	ext4	defaults	0	1
-LABEL=boot	/boot/efi	vfat	defaults,nofail	0	0
 LABEL=library	/library	ext4	defaults	0	2
 EOF
 
 # now install the grub mbr loader, and the grub EFI loader
 # following set up the mbr boot requirements
-grub-install --boot-directory=/mnt/sda2/boot /dev/sda
+grub-install --boot-directory=/mnt/$rootfs/boot /dev/sda
 if [ "$PAYLOAD_ARCH" == "i686" -a "$OS" == "fedora"]; then
-  cp ${SRCDIR}/grub.cfg.i686 /mnt/sda2/boot/grub/grub.cfg
+  cp ${SRCDIR}/grub.cfg.i686 /mnt/$rootfs/boot/grub/grub.cfg
 fi
 if [ "$PAYLOAD_ARCH" == "x86_64" -a "$OS" == "fedora" ]; then
-  cp ${SRCDIR}/grub.cfg.x86_64 /mnt/sda2/boot/grub/grub.cfg
-fi
-if [ "$OS" == "centos" ]; then
-  cp ${SRCDIR}/grub.cfg.centos /mnt/sda2/boot/grub/grub.cfg
-  sed -i -e "s/@@version@@/$KERNEL_VERSION/" /mnt/sda2/boot/grub/grub.cfg
-  INITRAMFS=`expr substr $KERNEL_VERSION 9 300`
-  sed -i -e "s/@@initramfs@@/${INITRAMFS}/" /mnt/sda2/boot/grub/grub.cfg
+  cp ${SRCDIR}/grub.cfg.x86_64 /mnt/$rootfs/boot/grub/grub.cfg
 fi
 
+function hide(){
 # following are attempting to set up EFI boot requirements
 #mkdir -p /mnt/sda1/EFI
 mkdir /home/tc/img
 mount /dev/sdb1 /mnt/sdb1
 mount /mnt/sdb1/boot/images/efiboot.img /home/tc/img
-cp -r /home/tc/img/* /mnt/sda2/boot/efi/
-grub-install --target=i386-efi --efi-directory=/mnt/sda2/boot/efi --bootloader-id=boot --boot-directory=/mnt/sda2/boot --recheck 
+cp -r /home/tc/img/* /mnt/$rootfs/boot/efi/
+grub-install --target=i386-efi --efi-directory=/mnt/$rootfs/boot/efi --bootloader-id=boot --boot-directory=/mnt/$rootfs/boot --recheck 
 cp ${SRCDIR}/grub.cfg.efi /mnt/sda1/EFI/BOOT/grub.cfg
 
 # make symbolic links for the kernel, and initramfs
-kernel=`find /mnt/sda2/boot | grep /vmlinuz-3 | head -n 1`
-ln -sf $(basename $kernel) /mnt/sda2/boot/vmlinuz
+kernel=`find /mnt/$rootfs/boot | grep /vmlinuz-3 | head -n 1`
+ln -sf $(basename $kernel) /mnt/$rootfs/boot/vmlinuz
 
-initrd=`find /mnt/sda2/boot | grep initramfs-3 | head -n 1`
-ln -sf $(basename $initrd) /mnt/sda2/boot/initramfs
+initrd=`find /mnt/$rootfs/boot | grep initramfs-3 | head -n 1`
+ln -sf $(basename $initrd) /mnt/$rootfs/boot/initramfs
+}
 
 # put a folder on the library partition, so that later we can look for it
 mkdir -p /mnt/sda3/cache
 # the shuttle is where to put any scripts to make deployment wide changes
-mkdir -p /mnt/sda2/opt/schoolserver/xsce/scripts/installer
-cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/sda2/opt/schoolserver/xsce/scripts/installer/
-cp /mnt/sdb2/tce/shuttle/sysprep /mnt/sda2/opt/schoolserver/xsce/scripts/installer/
-ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/sda2/usr/local/sbin/sysprep
-cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/sda2/etc/systemd/system/
+mkdir -p /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer
+cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer/
+cp /mnt/sdb2/tce/shuttle/sysprep /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer/
+ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/$rootfs/usr/local/sbin/sysprep
+cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/$rootfs/etc/systemd/system/
 echo
 echo done!
 echo
