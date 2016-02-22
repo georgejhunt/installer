@@ -106,6 +106,8 @@ until [ -e /dev/sda1 ]; do sleep .25; done
 mkfs.ext4 -L rootfs /dev/$rootfs
 mkfs.ext4 -L library /dev/sda2
 
+mkdir -p /mnt/sda1
+mkdir -p /mnt/sda2
 #mount /dev/sda1 /mnt/sda1
 mount /dev/$rootfs /mnt/$rootfs
 
