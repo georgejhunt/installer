@@ -108,21 +108,21 @@ mkfs.ext4 -L library /dev/sda2
 
 #mount /dev/sda1 /mnt/sda1
 mount /dev/$rootfs /mnt/$rootfs
-#mount /dev/sda3 /mnt/sda3
+
+mount /dev/sda2 /mnt/sda2
+# put a file on this drive that we can look for
+cd /mnt/sda2
+mkdir -p cache
+umount /mnt/sda2
 
 #create mount points for the partitions
 mkdir -p /mnt/$rootfs/library
 # mount them
 mount /dev/sda2 /mnt/$rootfs/library
-
-sleep 1
-# I'm hoping that this operation will wait until the mount is completed
-cd /mnt/$rootfs/library
-mkdir -p cache
+until [ -d /mnt/$rootfs/library/cache ]; do sleep .25; done
 
 # put the root file system in place
 cd /mnt/$rootfs/
-until [ -d /mnt/$rootfs/library/cache ]; do sleep .25; done
 tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
 
 # need to put the library contents in place via a separate tar file
