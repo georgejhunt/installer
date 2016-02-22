@@ -115,6 +115,7 @@ mount /dev/sda2 /mnt/sda2
 # put a file on this drive that we can look for
 cd /mnt/sda2
 mkdir -p cache
+cd /mnt/$rootfs
 umount /mnt/sda2
 
 #create mount points for the partitions
