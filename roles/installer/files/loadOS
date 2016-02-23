@@ -145,7 +145,7 @@ EOF
 # now install the grub mbr loader, and the grub EFI loader
 # following set up the mbr boot requirements
 grub-install --boot-directory=/mnt/$rootfs/boot /dev/sda
-if [ "$PAYLOAD_ARCH" == "i686" -a "$OS" == "fedora"]; then
+if [ "$PAYLOAD_ARCH" == "i686" -a "$OS" == "fedora" ]; then
   cp ${SRCDIR}/grub.cfg.i686 /mnt/$rootfs/boot/grub/grub.cfg
 fi
 if [ "$PAYLOAD_ARCH" == "x86_64" -a "$OS" == "fedora" ]; then
