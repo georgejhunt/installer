@@ -157,6 +157,7 @@ mkdir -p /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer
 cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer/
 cp /mnt/sdb2/tce/shuttle/sysprep /mnt/$rootfs/opt/schoolserver/xsce/scripts/installer/
 ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/$rootfs/usr/local/sbin/sysprep
+ln -s /opt/schoolserver/xsce/xsce-network /mnt/$rootfs/usr/local/sbin/xs-network
 cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/$rootfs/etc/systemd/system/
 echo
 echo done!
