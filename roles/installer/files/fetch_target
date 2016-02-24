@@ -65,16 +65,17 @@ fi
 echo
 echo "================================================================="
 echo 
-read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " PAYLOAD_ARCH
-case $PAYLOAD_ARCH in
-"i686"|"x86_64")
-   ;;
-*)
-   echo "Please enter either i686 or x86_64"
-   exit 1
-  ;;
-esac
+#read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " PAYLOAD_ARCH
+#case $PAYLOAD_ARCH in
+#"i686"|"x86_64")
+#   ;;
+#*)
+#   echo "Please enter either i686 or x86_64"
+#   exit 1
+#  ;;
+#esac
 
+PAYLOAD_ARCH="x86_64"
 PAYLOAD="netinst"
 gitcommit=`grep xsce_commit ${SOURCEMNT}/etc/xsce/xsce.ini|cut -d" " -f3`
 echo "the git commit is $gitcommit"
