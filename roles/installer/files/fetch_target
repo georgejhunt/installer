@@ -48,7 +48,8 @@ else # could not mout sda3, check if this might be a netinst
 	    SOURCEMNT="/mnt/sda2"
             mount /dev/sda1 /mnt/sda2/boot/efi
      else
-	     SOURCEMNT="/mnt/sda2"
+	     SOURCEMNT="/mnt/sda1"
+       LIBRARYMNT=""
        umount /mnt/sda2
        sleep 1
        mount /dev/sda2 /mnt/sda1/library
