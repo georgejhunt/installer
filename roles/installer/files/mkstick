@@ -408,6 +408,8 @@ dd if=/dev/zero of=$dev bs=1M count=100
 #dd if=/dev/zero of=$dev bs=1M count=2500
 
 # partition the stick with a small ISO (not writeable) and then larger mounted partition
+
+parted ${dev} mklabel msdos
 parted -a cylinder ${dev} mkpart primary 4mB 54mB
 parted -a cylinder ${dev} mkpart primary ext4 54mB 4gB
 
