@@ -15,6 +15,7 @@ PAYLOAD=
 PAYLOAD_ARCH=
 USBSIZE="3600" # in MB for just the data partition 
 
+
 # Let user decide whether to continue with last installer operation
 # Get the previous state
 if [ -f $PREFIX/persist/tce/installer.conf ]; then
@@ -125,6 +126,8 @@ if [ -z $REMOVABLE_DRIVES ];then
     exit 1
 fi
 dev="/dev/$REMOVABLE_DRIVES"
+# some distributions do automount, unmount everything
+umount /dev/$dev*
 
 # build the cache
 mkdir -p $ISO/boot/isolinux
@@ -409,9 +412,10 @@ dd if=/dev/zero of=$dev bs=1M count=100
 
 # partition the stick with a small ISO (not writeable) and then larger mounted partition
 
-parted ${dev} mklabel msdos
-parted -a cylinder ${dev} mkpart primary 4mB 54mB
-parted -a cylinder ${dev} mkpart primary ext4 54mB 4gB
+parted -s ${dev} mklabel msdos
+partprobe $dev
+parted -s -a cylinder ${dev} mkpart primary 4mB 54mB
+parted -s -a cylinder ${dev} mkpart primary ext4 54mB 4gB
 
 sleep 5
 partprobe $dev
