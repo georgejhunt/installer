@@ -62,14 +62,14 @@ if [[ $PAYLOAD != $NEWPAYLOAD || \
 cat << EOF > $PREFIX/persist/tce/installer.conf
 #OS="centos"
 OS="fedora"
-FC_VER="21"
+FC_VER="23"
 FC_URL="http://mirrors.usc.edu/pub/linux/distributions/fedora/linux/releases/${FC_VER}/Fedora/${FC_ARCH}/os/images/"
 UK_URL="http://download.unleashkids.org/xsce/downloads/installer/"
 ISO="${PREFIX}/iso_root"
 PERSIST="${PREFIX}/persist"
 PREFIX="${PREFIX}"
 # upstream versions, tiny core linux
-CORE_VERSION=5.x
+CORE_VERSION=7.x
 
 # tinycore initramfs name
 CORE_INITRD_X86=core
@@ -463,7 +463,7 @@ fi
 cp -p $PERSIST/target/loadOS /tmp/data/target
 cp -p $PERSIST/target/grub.cfg* /tmp/data/target
 
-if [ ! -z ${PAYLOAD} ];then
+if [ ! -z ${PAYLOAD} -a $PAYLOAD != "skip" ];then
   cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
 fi
 umount /tmp/data
