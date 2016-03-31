@@ -6,7 +6,8 @@ find /etc/sysconfig/network-scripts -name "ifcfg-*" |grep -v -e ifcfg-lo | xargs
 
 # remove uuid and ini files 
 rm -f /etc/xsce/uuid
-rm -f /etc/xsce/xsce.ini*
+# I don't think the console is happy if xsce.ini is missing.--and loose install history
+#rm -f /etc/xsce/xsce.ini*
 
 # remove any ssh keys
 rm -rf /root/.ssh/*

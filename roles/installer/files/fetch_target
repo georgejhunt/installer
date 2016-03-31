@@ -15,8 +15,8 @@ if [ $? -eq 0 ]; then
       umount /dev/sda2
       mount "/dev/sda2" "/mnt/sda2"
       if [ ! $? -eq 0 ];then
-	 echo "unable to mount /dev/sda2. quitting"
-	 exit 1
+      	 echo "unable to mount /dev/sda2. quitting"
+	       exit 1
       fi
       SOURCEMNT="/mnt/sda2"
       LIBRARYMNT="/mnt/sda3"
@@ -37,17 +37,23 @@ else # could not mout sda3, check if this might be a netinst
    # reminder: netinst when using EFI requires first partition to be EFI
    mount /dev/sda1 /mnt/sda1
    if [ $? -eq 0 ];then
-	if [ -d /mnt/sda1/usr ];then
-	    SOURCEMNT="/mnt/sda1"
-	    LIBRARYMNT=""
-        fi
+     if [ -d /mnt/sda1/usr ];then
+        SOURCEMNT="/mnt/sda1"
+        LIBRARYMNT=""
+     fi
    fi
    mount /dev/sda2 /mnt/sda2
    if [ $? -eq 0 ];then
-	if [ -d /mnt/sda2/usr ];then
+	   if [ -d /mnt/sda2/usr ];then
 	    SOURCEMNT="/mnt/sda2"
             mount /dev/sda1 /mnt/sda2/boot/efi
-        fi
+     else
+	     SOURCEMNT="/mnt/sda1"
+       LIBRARYMNT=""
+       umount /mnt/sda2
+       sleep 1
+       mount /dev/sda2 /mnt/sda1/library
+     fi
    fi
 fi
 if [ -z $SOURCEMNT ]; then
@@ -59,16 +65,17 @@ fi
 echo
 echo "================================================================="
 echo 
-read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " PAYLOAD_ARCH
-case $PAYLOAD_ARCH in
-"i686"|"x86_64")
-   ;;
-*)
-   echo "Please enter either i686 or x86_64"
-   exit 1
-  ;;
-esac
+#read -p "What is the achitecture of the hardware \(i686/x86_64\)?  " PAYLOAD_ARCH
+#case $PAYLOAD_ARCH in
+#"i686"|"x86_64")
+#   ;;
+#*)
+#   echo "Please enter either i686 or x86_64"
+#   exit 1
+#  ;;
+#esac
 
+PAYLOAD_ARCH="x86_64"
 PAYLOAD="netinst"
 gitcommit=`grep xsce_commit ${SOURCEMNT}/etc/xsce/xsce.ini|cut -d" " -f3`
 echo "the git commit is $gitcommit"
@@ -124,6 +131,12 @@ done
 # get the md5 of mydata
 #	
 md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
+
+# get the OS version
+cd ${SOURCEMNT}/boot/
+KENREL_VERSION=`ls | grep vmlinuz-3 | head -n 1`
+echo "KERNEL_VERSION=${KERNEL_VERSION}" >> /mnt/sdb2/tce/installer.conf
+
 cp ${SOURCEMNT}/root/anaconda-ks.cfg /mnt/sdb2/tce/
 cp ${SOURCEMNT}/boot/efi/EFI/fedora/grub.cfg /mnt/sdb2/tce/grub.cfg.efi
 cp ${SOURCEMNT}/boot/grub/grub.cfg /mnt/sdb2/tce/grub.cfg.mbr

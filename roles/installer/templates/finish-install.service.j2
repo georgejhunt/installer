@@ -1,5 +1,7 @@
 [Unit]
 Description=Small script to clean up offline install, set up networks,etc
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 Type=idle

@@ -1,7 +1,7 @@
 #!/bin/bash
-# script to run stuff that memorizes hardware addresses of dongles, maybe generates
-#   unique software keys, and sets everythin up for headless access
-ansible-playbook -i /opt/schoolserver/xsce/ansible_hosts \
-	/opt/schoolserver/xsce/xsce.yml --connection=local --tags="prep,network,gateway"
+# script to adapt to the network config after the TC install
+# 
+/opt/schoolserver/xsce/xsce-network
+
 systemctl disable finish-install.service
 
