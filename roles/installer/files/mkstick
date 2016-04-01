@@ -65,7 +65,7 @@ cat << EOF > $PREFIX/persist/tce/installer.conf
 OS="fedora"
 FC_VER="21"
 FC_URL="http://mirrors.usc.edu/pub/linux/distributions/fedora/linux/releases/${FC_VER}/Fedora/${FC_ARCH}/os/images/"
-UK_URL="http://download.unleashkids.org/xsce/downloads/installer/tools/"
+UK_URL="http://download.unleashkids.org/xsce/downloads/installer/"
 ISO="${PREFIX}/iso_root"
 PERSIST="${PREFIX}/persist"
 PREFIX="${PREFIX}"
@@ -412,10 +412,36 @@ dd if=/dev/zero of=$dev bs=1M count=100
 
 # partition the stick with a small ISO (not writeable) and then larger mounted partition
 
-parted -s ${dev} mklabel msdos
-partprobe $dev
-parted -s -a cylinder ${dev} mkpart primary 4mB 54mB
-parted -s -a cylinder ${dev} mkpart primary ext4 54mB 4gB
+#parted -s ${dev} mklabel msdos
+#partprobe $dev
+#parted -s -a cylinder ${dev} mkpart primary 4mB 54mB
+#parted -s -a cylinder ${dev} mkpart primary ext4 54mB 4gB
+cat << EOF | /usr/sbin/fdisk ${dev}
+d
+
+d
+
+d
+
+d
+
+n
+p
+1
+
++180M
+n
+p
+
+
++${USBSIZE}M
+a
+1
+t
+1
+b
+w
+EOF
 
 sleep 5
 partprobe $dev
