@@ -62,9 +62,9 @@ if [[ $PAYLOAD != $NEWPAYLOAD || \
 cat << EOF > $PREFIX/persist/tce/installer.conf
 #OS="centos"
 OS="fedora"
-FC_VER="23"
+FC_VER="21"
 FC_URL="http://mirrors.usc.edu/pub/linux/distributions/fedora/linux/releases/${FC_VER}/Fedora/${FC_ARCH}/os/images/"
-UK_URL="http://download.unleashkids.org/xsce/downloads/installer/"
+UK_URL="http://download.unleashkids.org/xsce/downloads/installer/tools/"
 ISO="${PREFIX}/iso_root"
 PERSIST="${PREFIX}/persist"
 PREFIX="${PREFIX}"
@@ -285,11 +285,11 @@ p_end "ok"
 
 # get the essential configuration files to /boot/isolinux
 cd $SCRIPTDIR
-cp isolinux.cfg $ISO/boot/isolinux
-cp /usr/share/syslinux/isolinux.bin $ISO/boot/isolinux
-cp /usr/share/syslinux/ldlinux.c32 $ISO/boot/isolinux
-cp /usr/share/syslinux/menu.c32 $ISO/boot/isolinux
-cp /usr/share/syslinux/libutil.c32 $ISO/boot/isolinux
+cp -p isolinux.cfg $ISO/boot/isolinux
+cp -p /usr/share/syslinux/isolinux.bin $ISO/boot/isolinux
+cp -p /usr/share/syslinux/ldlinux.c32 $ISO/boot/isolinux
+cp -p /usr/share/syslinux/menu.c32 $ISO/boot/isolinux
+cp -p /usr/share/syslinux/libutil.c32 $ISO/boot/isolinux
 
 # get the persistent tinycore data to include in our package
 p_begin "Fetching the persitent Data for Tiny Core ... "
@@ -309,7 +309,7 @@ else
   fi
 fi
 # following script copies the rootfs, after configuration, back to USB stick
-cp $SCRIPTDIR/fetch_target $tce_root
+cp -p $SCRIPTDIR/fetch_target $tce_root
 
 p_end "ok"
 
@@ -366,13 +366,13 @@ fi
 
 # and the generic config files
 cd $SCRIPTDIR
-cp loadOS $PERSIST/target
-cp grub.cfg* $PERSIST/target/
+cp -p loadOS $PERSIST/target
+cp -p grub.cfg* $PERSIST/target/
 # We're assuming that efi is only x86_64 --grub.cfg.target implies x86_64
-cp grub.cfg.target.efi $PERSIST/target/grub.cfg.efi
-cp finish-install.service /$PERSIST/tce/shuttle
-cp xsce-after-installer /$PERSIST/tce/shuttle
-cp sysprep /$PERSIST/tce/shuttle
+cp -p grub.cfg.target.efi $PERSIST/target/grub.cfg.efi
+cp -p finish-install.service /$PERSIST/tce/shuttle
+cp -p xsce-after-installer /$PERSIST/tce/shuttle
+cp -p sysprep /$PERSIST/tce/shuttle
 
 #=================================================================================
 # The following stuff is necessary to create the USB stick
@@ -465,7 +465,7 @@ cp -p $PERSIST/target/loadOS /tmp/data/target
 cp -p $PERSIST/target/grub.cfg* /tmp/data/target
 
 if [ ! -z ${PAYLOAD} -a $PAYLOAD != "skip" ];then
-  cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}/
+  cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}
 fi
 umount /tmp/data
 rmdir /tmp/data
