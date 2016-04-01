@@ -65,7 +65,7 @@ cat << EOF > $PREFIX/persist/tce/installer.conf
 OS="fedora"
 FC_VER="21"
 FC_URL="http://mirrors.usc.edu/pub/linux/distributions/fedora/linux/releases/${FC_VER}/Fedora/${FC_ARCH}/os/images/"
-UK_URL="http://download.unleashkids.org/xsce/downloads/installer/"
+UK_URL="http://download.unleashkids.org/xsce/downloads/installer/tools/"
 ISO="${PREFIX}/iso_root"
 PERSIST="${PREFIX}/persist"
 PREFIX="${PREFIX}"
