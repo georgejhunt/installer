@@ -18,6 +18,12 @@ USBSIZE="3600" # in MB for just the data partition
 
 # Let user decide whether to continue with last installer operation
 # Get the previous state
+# -- thoughts have evolved -- always start over
+rm $PREFIX/persist/tce/installer.conf
+
+NEWPAYLOAD='skip'
+# skip all of the following:
+if 1; then
 if [ -f $PREFIX/persist/tce/installer.conf ]; then
 	source $PREFIX/persist/tce/installer.conf
 fi
@@ -53,6 +59,7 @@ y|Y)
 	NEWPAYLOAD_ARCH=$PAYLOAD_ARCH
 	;;
 esac
+fi
 #=================================================================================
 # create a configuration file to pass to tiny core linux (centralize variables)
 #  To start a new install process from downloaded netinst, remove persist/tct/installer.conf
@@ -83,7 +90,8 @@ PAYLOAD_ARCH=$NEWPAYLOAD_ARCH
 
 # ARCH is the tinycore arch -- we'll do everything with i686
 ARCH="x86"
-TARLIB="true"	
+# tar library separately
+TARLIB="false"	
 EOF
 
 chmod 755 $PREFIX/persist/tce/installer.conf
@@ -472,7 +480,7 @@ fi
 cp -p $PERSIST/target/loadOS /tmp/data/target
 cp -p $PERSIST/target/grub.cfg* /tmp/data/target
 
-if [ ! -z ${PAYLOAD} -a $PAYLOAD != "skip" ];then
+if [ ! -z ${PAYLOAD} -a "$PAYLOAD" != "skip" ];then
   cp -rp $PERSIST/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz /tmp/data/target/${FC_VER}/${PAYLOAD_ARCH}
 fi
 umount /tmp/data
