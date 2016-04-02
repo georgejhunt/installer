@@ -18,11 +18,4 @@ cd xsce
 ./runtags download,download2
 ./install-console
 
-# create a grub config file that uses devices rather than UUIDs
-grep UUID /etc/default/grub
-if [ $? -ne 0 ]; then
-  echo GRUB_DISABLE_UUID=true >> /etc/default/grub
-fi
-grub2-mkconfig -o /boot/grub/grub.cfg
-
 echo "all done"
