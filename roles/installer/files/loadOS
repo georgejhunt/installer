@@ -44,8 +44,8 @@ fi
 
 parted -s /dev/sda mklabel msdos
 partprobe /dev/sda
-parted -s -a cylinder /dev/sda mkpart primary 4mB 54mB
-parted -s -a cylinder /dev/sda mkpart primary ext4 54mB -1s
+parted -s -a optimal /dev/sda mkpart primary ext4 50gB
+parted -s -a optimal -- /dev/sda mkpart primary ext4 50gB -1s
 
 partprobe /dev/sda
 until [ -e /dev/sda1 ]; do sleep .25; done
