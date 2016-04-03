@@ -26,9 +26,10 @@ curdir=`pwd`
 if [ -d /mnt/sdb2/tce ];then
 	dd ip=/dev/zero of=/dev/sda bs=512 count=2
 fi
-if [ ! -z "$MBR" ]; then
+
 # for testing purposes we need to be able to delete a gpt and initialize
 #  as a mbr partition table. But only gdisk knows where gpt is 
+
 # First determine if current partition table is gpt
 gpt=`blkid /dev/sda | grep gpt`
 if [ ! -z "$gpt" ]; then
@@ -41,69 +42,15 @@ y
 EOF
 fi
 
-# now create a regular mbr partition table
-cat << EOF | fdisk /dev/sda
-d
-1
-d
-2
-d
-3
-d
-4
-n
-p
-1
-
-+50G
-n
-p
-2
-
-
-a
-1
-t
-1
-b
-w
-EOF
-
-else
-# create a gpt partition table
-cat << EOF | gdisk /dev/sda
-d
-1
-d
-2
-d
-3
-d
-4
-n
-1
-1
-+500M
-ef00
-n
-2
-
-+50G
-8300
-n
-3
-
-
-8300
-w
-y
-EOF
-fi
+parted -s /dev/sda mklabel msdos
+partprobe /dev/sda
+parted -s -a cylinder /dev/sda mkpart primary 4mB 54mB
+parted -s -a cylinder /dev/sda mkpart primary ext4 54mB -1s
 
 partprobe /dev/sda
 until [ -e /dev/sda1 ]; do sleep .25; done
 
-mkfs.ext4 -L rootfs /dev/$rootfs
+mkfs.ext4 -L rootfs /dev/sda1
 mkfs.ext4 -L library /dev/sda2
 
 mkdir -p /mnt/sda1
