@@ -258,12 +258,10 @@ rsync.tcz
 sed.tcz
 syslinux.tcz
 tar.tcz
-tree.tcz
 usb-utils.tcz
 wget.tcz
 xz.tcz
 EOF
-exec  > tee >> $LOGFILE
 
 # wait for the new file to be available
 sync
@@ -415,40 +413,20 @@ case $ans in
 esac
 
 # if the non-data is cleared it might compress better
-dd if=/dev/zero of=$dev bs=1M count=100
+#dd if=/dev/zero of=$dev bs=1M count=100
 #dd if=/dev/zero of=$dev bs=1M count=2500
 
 # partition the stick with a small ISO (not writeable) and then larger mounted partition
 
 #parted -s ${dev} mklabel msdos
 #partprobe $dev
-#parted -s -a cylinder ${dev} mkpart primary 4mB 54mB
+#parted -s -a cylinder ${dev} mkpart primary 8192s 54mB
 #parted -s -a cylinder ${dev} mkpart primary ext4 54mB 4gB
-cat << EOF | /usr/sbin/fdisk ${dev}
-d
-
-d
-
-d
-
-d
-
-n
-p
-1
-
-+180M
-n
-p
 
 
-+${USBSIZE}M
-a
-1
-t
-1
-b
-w
+cat << EOF > sfdisk
+8192,110592
+110593,8389836
 EOF
 
 sleep 5
