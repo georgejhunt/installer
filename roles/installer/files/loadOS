@@ -42,15 +42,10 @@ y
 EOF
 fi
 
-#parted -s /dev/sda mklabel msdos
-#partprobe /dev/sda
-#parted -s -a optimal /dev/sda mkpart primary ext4 50gB
-#parted -s -a optimal -- /dev/sda mkpart primary ext4 50gB -1s
-
-sfdisk <<EOF
-2048s,50G,83,*
-50G, ,83
-EOF
+parted -s /dev/sda mklabel msdos
+partprobe /dev/sda
+parted -s -a optimal /dev/sda mkpart primary ext4 50gB
+parted -s -a optimal -- /dev/sda mkpart primary ext4 50gB -1s
 
 partprobe /dev/sda
 until [ -e /dev/sda1 ]; do sleep .25; done
