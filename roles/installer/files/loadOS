@@ -44,7 +44,7 @@ fi
 
 parted -s /dev/sda mklabel msdos
 partprobe /dev/sda
-parted -s -a optimal /dev/sda mkpart primary ext4 50gB
+parted -s -a optimal /dev/sda mkpart primary ext4 8192s 50gB
 parted -s -a optimal -- /dev/sda mkpart primary ext4 50gB -1s
 
 partprobe /dev/sda
