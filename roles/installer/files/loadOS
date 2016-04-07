@@ -42,6 +42,9 @@ y
 EOF
 fi
 
+# parted refuses to rm partition without interaction, so blast partition table
+dd if=/dev/zero of=/dev/sda bs=512 count=1
+
 parted -s /dev/sda mklabel msdos
 partprobe /dev/sda
 parted -s -a optimal /dev/sda mkpart primary ext4 8192s 50gB
