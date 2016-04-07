@@ -12,23 +12,8 @@ tags=$(echo $1 | tr "," "\n")
 
 found="N"
 
-for tag in $tags
-do
-  if [ "$tag" == "prep" ]
-  then
-    found="Y"
-  fi
-
-done
-
-# echo $found
 
 taglist=$1
-
-if [ "$found" == "N" ]
-then
-  taglist="prep,"$taglist
-fi
 
 # script to run a specific tag in the current playbook
 if [ $# -ne 1 ]; then
