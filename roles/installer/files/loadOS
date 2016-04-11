@@ -94,8 +94,9 @@ cd $curdir
 
 # create a fstab
 cat << EOF > /mnt/$ROOTFS/etc/fstab
-LABEL=rootfs	/	fat32	defaults	0	1
-LABEL=swap	/	swap	defaults	0	1
+LABEL=rootfs	/	ext4	defaults	0	1
+LABEL=boot	/	fat16	defaults	0	1
+LABEL=swap	/	swap	defaults	0	0
 LABEL=library	/library	ext4	defaults	0	2
 EOF
 
