@@ -57,43 +57,43 @@ partprobe /dev/sda
 until [ -e /dev/sda1 ]; do sleep .25; done
 
 mkfs.fat16 -L boot /dev/sda1
-mkfs.ext4 -L rootfs /dev/sda2
+mkfs.ext4 -L rootfs /dev/$ROOTFS
 mkswap -L swap /dev/sda3
 mkfs.ext4 -L library /dev/sda4
 
 mkdir -p /mnt/sda1
-mkdir -p /mnt/sda2
+mkdir -p /mnt/$ROOTFS
 mkdir -p /mnt/sda4
 #mount /dev/sda1 /mnt/sda1
-mount /dev/sda2 /mnt/sda2
+mount /dev/$ROOTFS /mnt/$ROOTFS
 
 mount /dev/sda4 /mnt/sda4
 # put a file on this drive that we can look for
 cd /mnt/sda4
 mkdir -p cache
-cd /mnt/sda2
+cd /mnt/$ROOTFS
 umount /mnt/sda4
 
 #create mount points for the partitions
-mkdir -p /mnt/sda2/library
+mkdir -p /mnt/$ROOTFS/library
 # mount them
-mount /dev/sda4 /mnt/sda2/library
-until [ -d /mnt/sda2/library/cache ]; do sleep .25; done
+mount /dev/sda4 /mnt/$ROOTFS/library
+until [ -d /mnt/$ROOTFS/library/cache ]; do sleep .25; done
 
 # put the root file system in place
-cd /mnt/sda2/
+cd /mnt/$ROOTFS/
 tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}.tgz
 
 # need to put the library contents in place via a separate tar file
 if [ "$PAYLOAD" != "netinst" -a "$TARLIB" == "true" ];then
-  cd /mnt/sda2/library
+  cd /mnt/$ROOTFS/library
   tar -xf ${SRCDIR}/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}-library.tgz
 fi
 
 cd $curdir 
 
 # create a fstab
-cat << EOF > /mnt/sda2/etc/fstab
+cat << EOF > /mnt/$ROOTFS/etc/fstab
 LABEL=rootfs	/	fat32	defaults	0	1
 LABEL=swap	/	swap	defaults	0	1
 LABEL=library	/library	ext4	defaults	0	2
@@ -101,15 +101,15 @@ EOF
 
 # now install the grub mbr loader, and the grub EFI loader
 # following set up the mbr boot requirements
-grub-install --boot-directory=/mnt/sda2/boot /dev/sda
+grub-install --boot-directory=/mnt/$ROOTFS/boot /dev/sda
 
 # the shuttle is where to put any scripts to make deployment wide changes
-mkdir -p /mnt/sda2/opt/schoolserver/xsce/scripts/installer
-cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/sda2/opt/schoolserver/xsce/scripts/installer/
-cp /mnt/sdb2/tce/shuttle/sysprep /mnt/sda2/opt/schoolserver/xsce/scripts/installer/
-ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/sda2/usr/local/sbin/sysprep
-ln -s /opt/schoolserver/xsce/xsce-network /mnt/sda2/usr/local/sbin/xs-network
-cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/sda2/etc/systemd/system/
+mkdir -p /mnt/$ROOTFS/opt/schoolserver/xsce/scripts/installer
+cp /mnt/sdb2/tce/shuttle/xsce-after-installer /mnt/$ROOTFS/opt/schoolserver/xsce/scripts/installer/
+cp /mnt/sdb2/tce/shuttle/sysprep /mnt/$ROOTFS/opt/schoolserver/xsce/scripts/installer/
+ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/$ROOTFS/usr/local/sbin/sysprep
+ln -s /opt/schoolserver/xsce/xsce-network /mnt/$ROOTFS/usr/local/sbin/xs-network
+cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/$ROOTFS/etc/systemd/system/
 echo
 echo done!
 echo
