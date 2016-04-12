@@ -7,5 +7,4 @@
   - vars/local_vars.yml
 
   roles:
-      - { role: 1-prep, tags: ['prep','platform','base'] }
       - { role: installer, tags: ['installer'] }

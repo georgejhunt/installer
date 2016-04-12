@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ ! -f installer.yml ]
+then
+ echo "Installer Playbook not found."
+ echo "Please run this command from the top level of the git repo."
+ echo "Exiting."
+ exit
+fi
+
+taglist=installer
+ansible-playbook -i ansible_hosts installer.yml --connection=local --tags="""$taglist"""
