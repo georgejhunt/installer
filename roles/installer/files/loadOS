@@ -48,15 +48,15 @@ dd if=/dev/zero of=/dev/sda bs=512 count=1
 
 parted -s /dev/sda mklabel msdos
 partprobe /dev/sda
-parted -s -a optimal /dev/sda mkpart primary fat16 8192s 50mB
-parted -s -a optimal /dev/sda mkpart primary ext4 50mB 46gB
+parted -s -a optimal /dev/sda mkpart primary fat32 8192s 300mB
+parted -s -a optimal /dev/sda mkpart primary ext4 300mB 46gB
 parted -s -a optimal /dev/sda mkpart primary linux-swap 46gB 50gB
 parted -s -a optimal -- /dev/sda mkpart primary ext4 50gB -1s
 
 partprobe /dev/sda
 until [ -e /dev/sda1 ]; do sleep .25; done
 
-mkfs.fat16 -L boot /dev/sda1
+mkfs.vfat -n boot /dev/sda1
 mkfs.ext4 -L rootfs /dev/$ROOTFS
 mkswap -L swap /dev/sda3
 mkfs.ext4 -L library /dev/sda4
@@ -99,7 +99,7 @@ cd $curdir
 # create a fstab
 cat << EOF > /mnt/$ROOTFS/etc/fstab
 LABEL=rootfs	/	ext4	defaults	0	1
-LABEL=boot	/	fat16	defaults	0	1
+LABEL=boot	/boot	vfat	defaults	0	1
 LABEL=swap	/	swap	defaults	0	0
 LABEL=library	/library	ext4	defaults	0	2
 EOF
