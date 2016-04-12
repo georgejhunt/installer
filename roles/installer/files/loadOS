@@ -64,11 +64,12 @@ mkfs.ext4 -L library /dev/sda4
 mkdir -p /mnt/sda1
 mkdir -p /mnt/$ROOTFS
 mkdir -p /mnt/sda4
-#mount /dev/sda1 /mnt/sda1
+mount /dev/sda1 /mnt/sda1
 mount /dev/$ROOTFS /mnt/$ROOTFS
 
 mount /dev/sda4 /mnt/sda4
-# put a file on this drive that we can look for
+## put a file on this drive that we can look for
+mkdir -p /mnt/sda1/grub
 cd /mnt/sda4
 mkdir -p cache
 cd /mnt/$ROOTFS
@@ -76,9 +77,12 @@ umount /mnt/sda4
 
 #create mount points for the partitions
 mkdir -p /mnt/$ROOTFS/library
+mkdir -p /mnt/$ROOTFS/boot
 # mount them
 mount /dev/sda4 /mnt/$ROOTFS/library
 until [ -d /mnt/$ROOTFS/library/cache ]; do sleep .25; done
+mount /dev/sda1 /mnt/$ROOTFS/boot 
+until [ -d /mnt/$ROOTFS/boot/grub ]; do sleep .25; done
 
 # put the root file system in place
 cd /mnt/$ROOTFS/
