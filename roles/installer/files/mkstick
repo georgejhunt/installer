@@ -424,9 +424,9 @@ esac
 #parted -s -a cylinder ${dev} mkpart primary ext4 54mB 4gB
 
 
-sfdisk $dev << EOF 
+sfdisk -u S $dev << EOF 
 8192,110592,83,*
-110593,8389836,83
+118785,8389836,83
 EOF
 
 sleep 5
