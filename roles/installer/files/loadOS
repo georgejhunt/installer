@@ -111,6 +111,9 @@ cp /mnt/sdb2/tce/shuttle/sysprep /mnt/$ROOTFS/opt/schoolserver/xsce/scripts/inst
 ln -s /opt/schoolserver/xsce/scripts/installer/sysprep /mnt/$ROOTFS/usr/local/sbin/sysprep
 ln -s /opt/schoolserver/xsce/xsce-network /mnt/$ROOTFS/usr/local/sbin/xs-network
 cp /mnt/sdb2/tce/shuttle/finish-install.service /mnt/$ROOTFS/etc/systemd/system/
+
+# blast the modified grub.cfg to the correct place
+cp -f /mnt/sdb2/tce/grub.cfg /mnt/sda1/boot/grub/
 echo
 echo done!
 echo

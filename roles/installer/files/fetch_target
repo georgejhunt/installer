@@ -122,11 +122,9 @@ fi
 
 # get the grub files
 #
-find /boot | grep grub.cfg > /mnt/sdb2/tce/grublist
-for f in /mnt/sdb2/tce/grublist; do
-  mkdir -p /mnt/sdb2/tce$f
-  cp $f /mnt/sdb2/tce$f
-done
+  cp /boot/grub/grub.conf /mnt/sdb2/tce
+# modify the rootfs device to be sda2
+sed -i -e 's/sda1/sda2/' /mnt/sdb2/tce/grub.cfg
 
 # get the md5 of mydata
 #	
