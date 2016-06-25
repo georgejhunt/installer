@@ -122,7 +122,7 @@ fi
 
 # get the grub config file
 #
-  cp ${SOURCEMNT}/boot/grub2/grub.cfg /mnt/sdb2/tce/
+  cp ${SOURCEMNT}/boot/grub/grub.cfg /mnt/sdb2/tce/
 # modify the rootfs device to be sda2
 sed -i -e 's|sda1|sda2|' /mnt/sdb2/tce/grub.cfg
 sed -i -e 's|/boot||' /mnt/sdb2/tce/grub.cfg
