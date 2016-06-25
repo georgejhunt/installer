@@ -111,18 +111,18 @@ if [  "$TARLIB" == "true" ];then
 else
     tar -czf ${dest} *
 fi
-md5sum ${dest} ${dest}.md5.txt 
+md5sum ${dest} > ${dest}.md5.txt 
  
 if [ ! -z ${LIBRARYMNT} -a "$TARLIB" == "true" ];then
 	cd ${LIBRARYMNT} 
         dest=/mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}/${PAYLOAD_ARCH}fc${FC_VER}_${PAYLOAD}-library.tgz
 	tar -czf ${dest} *
-	md5sum ${dest} ${dest}.md5.txt 
+	md5sum ${dest} > ${dest}.md5.txt 
 fi
 
 # get the grub config file
 #
-  cp ${SOURCEMNT}/boot/grub/grub.cfg /mnt/sdb2/tce/
+  cp ${SOURCEMNT}/boot/grub2/grub.cfg /mnt/sdb2/tce/
 # modify the rootfs device to be sda2
 sed -i -e 's|sda1|sda2|' /mnt/sdb2/tce/grub.cfg
 sed -i -e 's|/boot||' /mnt/sdb2/tce/grub.cfg
@@ -131,14 +131,15 @@ sed -i -e 's|/boot||' /mnt/sdb2/tce/grub.cfg
 #	
 md5sum /mnt/sdb2/tce/mydata.tgz > /mnt/sdb2/tce/mydata.tgz.md5.txt
 
+# Following is changed to let grub manipulate the grub.conf
 # get the OS version
-cd ${SOURCEMNT}/boot/
-KENREL_VERSION=`ls | grep vmlinuz-3 | head -n 1`
-echo "KERNEL_VERSION=${KERNEL_VERSION}" >> /mnt/sdb2/tce/installer.conf
+#cd ${SOURCEMNT}/boot/
+#KENREL_VERSION=`ls | grep vmlinuz-3 | head -n 1`
+#echo "KERNEL_VERSION=${KERNEL_VERSION}" >> /mnt/sdb2/tce/installer.conf
 
 # fetch the actual kernal version number and update grub.cfg
-version=`cat ${SOURCEMNT}/boot/grub/grub.cfg | grep -e vmlinuz.*PAE | sed -e  's:^.*\(3\.[0-9]*\.[0-9]*\-[0-9]*\).*$:\1:'`
-echo "PAYLOAD_KERNEL=$version" > /mnt/sdb2/tce/payload_kernel
+#version=`cat ${SOURCEMNT}/boot/grub/grub.cfg | grep -e vmlinuz.*PAE | sed -e  's:^.*\(3\.[0-9]*\.[0-9]*\-[0-9]*\).*$:\1:'`
+#echo "PAYLOAD_KERNEL=$version" > /mnt/sdb2/tce/payload_kernel
 
 ls -l /mnt/sdb2/target/${FC_VER}/${PAYLOAD_ARCH}
 
