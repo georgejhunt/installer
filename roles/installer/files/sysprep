@@ -28,3 +28,4 @@ fi
 grub2-mkconfig -o /boot/grub/grub.cfg
 # remove the conflicting instructions
 rm -f /boot/grub2/grub.cfg
+ln -s /boot/grub/grub.cfg /boot/grub2/grub.cfg
