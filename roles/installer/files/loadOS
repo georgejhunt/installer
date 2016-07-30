@@ -47,8 +47,9 @@ fi
 dd if=/dev/zero of=/dev/sda bs=512 count=1
 
 parted -s /dev/sda mklabel msdos
+sleep 2
 partprobe /dev/sda
-parted -s -a optimal /dev/sda mkpart primary ext4 8192s -1s 
+parted -s -a optimal -- /dev/sda mkpart primary ext4 8192s -1s 
 #parted -s -a optimal /dev/sda mkpart primary fat32 8192s 300mB
 #parted -s -a optimal /dev/sda mkpart primary ext4 300mB 46gB
 #parted -s -a optimal /dev/sda mkpart primary linux-swap 46gB 50gB
